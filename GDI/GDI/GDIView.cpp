@@ -85,7 +85,7 @@ void CGDIView::ViewInit(CDC* pDC)
 	DrawDashboard(pDC, rect);
 
 	//Instruments
-	DrawInstruments(pDC, rect);
+	DrawDataInstruments(pDC, rect);
 }
 
 void CGDIView::DrawLeftWindow(CDC* pDC, CRect rect)
@@ -98,8 +98,8 @@ void CGDIView::DrawLeftWindow(CDC* pDC, CRect rect)
 	CBrush *oldBrush = pDC->SelectObject(&brush);
 
 	CPoint w11(0, 0.075*rect.bottom);
-	CPoint w12(100, 0.2*rect.bottom);
-	CPoint w13(150, 0.7*rect.bottom);
+	CPoint w12(rect.right * 0.15, 0.2*rect.bottom);
+	CPoint w13(rect.right * 0.20, 0.7*rect.bottom);
 	CPoint w14(0, 0.85 *rect.bottom);
 	CPoint array1[4];
 	array1[0] = w11;
@@ -125,11 +125,11 @@ void CGDIView::DrawCenterWindow(CDC* pDC, CRect rect)
 	CPen *oldPen = pDC->SelectObject(&pen);
 	CBrush *oldBrush = pDC->SelectObject(&brush);
 
-	CPoint w11(120, 0.095 * rect.bottom);
-	CPoint w12(rect.right - 120, 0.095 * rect.bottom);
-	CPoint w13(rect.right - 185, 0.7 * rect.bottom);
+	CPoint w11(rect.right * 0.15, 0.095 * rect.bottom);
+	CPoint w12(rect.right * 0.85, 0.095 * rect.bottom);
+	CPoint w13(rect.right * 0.79, 0.7 * rect.bottom);
 	CPoint w14(rect.right / 2, 0.6 *rect.bottom);
-	CPoint w15(185, 0.7 * rect.bottom);
+	CPoint w15(rect.right * 0.21, 0.7 * rect.bottom);
 	CPoint array1[5];
 	array1[0] = w11;
 	array1[1] = w12;
@@ -156,8 +156,8 @@ void CGDIView::DrawRightWindow(CDC* pDC, CRect rect)
 	CBrush *oldBrush = pDC->SelectObject(&brush);
 
 	CPoint w11(rect.right, 0.075*rect.bottom);
-	CPoint w12(rect.right - 100, 0.2*rect.bottom);
-	CPoint w13(rect.right - 150, 0.7*rect.bottom);
+	CPoint w12(rect.right * 0.85, 0.2*rect.bottom);
+	CPoint w13(rect.right * 0.80, 0.7*rect.bottom);
 	CPoint w14(rect.right, 0.85 *rect.bottom);
 	CPoint array1[4];
 	array1[0] = w11;
@@ -183,11 +183,11 @@ void CGDIView::DrawDashboard(CDC* pDC, CRect rect)
 	CPen *oldPen = pDC->SelectObject(&pen);
 	CBrush *oldBrush = pDC->SelectObject(&brush);
 
-	CPoint w11(150, rect.bottom);
-	CPoint w12(155, 0.75 * rect.bottom);
+	CPoint w11(rect.right * 0.21, rect.bottom);
+	CPoint w12(rect.right * 0.21, 0.75 * rect.bottom);
 	CPoint w13(rect.right / 2, 0.65 * rect.bottom);
-	CPoint w14(rect.right - 155, 0.75 * rect.bottom);
-	CPoint w15(rect.right - 150, rect.bottom);
+	CPoint w14(rect.right * 0.79, 0.75 * rect.bottom);
+	CPoint w15(rect.right * 0.79, rect.bottom);
 	CPoint array1[5];
 	array1[0] = w11;
 	array1[1] = w12;
@@ -204,8 +204,9 @@ void CGDIView::DrawDashboard(CDC* pDC, CRect rect)
 	brush.DeleteObject();
 }
 
-void CGDIView::DrawInstruments(CDC* pDC, CRect rect)
+void CGDIView::DrawDataInstruments(CDC* pDC, CRect rect)
 {
+	//Rects
 	CPen pen(PS_SOLID, 3, RGB(255, 255, 255));
 	CBrush brush;
 	brush.CreateSolidBrush(RGB(32, 32, 32));
@@ -213,20 +214,72 @@ void CGDIView::DrawInstruments(CDC* pDC, CRect rect)
 	CPen *oldPen = pDC->SelectObject(&pen);
 	CBrush *oldBrush = pDC->SelectObject(&brush);
 
-	int x1 = rect.right * 0.45 - 200;
-	int y1 = 0.70* rect.bottom;
-	int x2 = rect.right * 0.45;
-	int y2 = 0.85* rect.bottom;
-	int x3 = 20;
-	int y3 = 20;
-
-	pDC->RoundRect(x1, y1, x2, y2, x3, y3);
+	pDC->RoundRect(0.39*rect.right, 0.79*rect.bottom, 0.49*rect.right, 0.99*rect.bottom, 0.01*rect.right, 0.01*rect.right);
+	pDC->RoundRect(0.51*rect.right, 0.79*rect.bottom, 0.61*rect.right, 0.99*rect.bottom, 0.01*rect.right, 0.01*rect.right);
 
 	pDC->SelectObject(oldBrush);
 	pDC->SelectObject(oldPen);
 
 	pen.DeleteObject();
 	brush.DeleteObject();
+
+	//Text
+	CFont font;
+	CFont *oldFont = pDC->SelectObject(&font);
+	LPCTSTR fontStyle = (LPCTSTR)"Arial";
+	int fontSize = rect.right * 0.012;
+	font.CreateFont(fontSize, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, fontStyle);
+	pDC->SelectObject(&font);
+
+	pDC->SetTextAlign(TA_LEFT);
+	int oldMode = pDC->SetBkMode(TRANSPARENT);
+
+	COLORREF oldColor = pDC->SetTextColor(RGB(0, 153, 0));
+
+	int x = 0.395*rect.right;
+	int y = 0.81*rect.bottom;
+
+	//Left align text
+	CString s[] = {
+		(CString)"353mph",
+		(CString)"H: 23'",
+		(CString)"A: 284'",
+		(CString)"1217lpm'"
+	};
+	for (int i = 0; i < 4; i++)
+	{
+		if (i == 0)
+		{
+			pDC->TextOut(x, y, s[i]);
+			continue;
+		}
+		pDC->TextOut(x, y + fontSize * i * 1.5, s[i]);
+	}
+
+	//Right align text
+	pDC->SetTextAlign(TA_RIGHT);
+	CString s1[] = {
+		(CString)"1285m",
+		(CString)"43°1478'",
+		(CString)"12°13'18'",
+		(CString)"13:48"
+	};
+	x = 0.485*rect.right;
+	for (int i = 0; i < 4; i++)
+	{
+		if (i == 0)
+		{
+			pDC->TextOut(x, y, s1[i]);
+			continue;
+		}
+		pDC->TextOut(x, y + fontSize * i*1.5, s1[i]);
+	}
+
+	pDC->SetTextColor(oldColor);
+	pDC->SelectObject(oldFont);
+	pDC->SetBkMode(oldMode);
+
+	font.DeleteObject();
 }
 
 // CGDIView printing
