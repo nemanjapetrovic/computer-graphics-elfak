@@ -29,6 +29,9 @@ public:
 	void DrawRightWindow(CDC* pDC, CRect rect);
 	void DrawDashboard(CDC* pDC, CRect rect);
 	void DrawDataInstruments(CDC* pDC, CRect rect);
+
+	void DrawSmoothLeftWindow(CDC* pDC, CRect rect);
+	void DrawSmoothDashbouard(CDC* pDC, CRect rect);
 protected:
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
 	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);

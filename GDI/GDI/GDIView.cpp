@@ -81,8 +81,14 @@ void CGDIView::ViewInit(CDC* pDC)
 	DrawRightWindow(pDC, rect);
 	DrawCenterWindow(pDC, rect);
 
+	//Windows smooth
+	//DrawSmoothDashbouard(pDC, rect);
+
 	//Dashboard
 	DrawDashboard(pDC, rect);
+
+	//Dashboard smooth
+	//DrawSmoothLeftWindow(pDC, rect);
 
 	//Instruments
 	DrawDataInstruments(pDC, rect);
@@ -280,6 +286,110 @@ void CGDIView::DrawDataInstruments(CDC* pDC, CRect rect)
 	pDC->SetBkMode(oldMode);
 
 	font.DeleteObject();
+}
+
+void CGDIView::DrawSmoothLeftWindow(CDC* pDC, CRect rect)
+{
+
+	CPen pen(PS_SOLID, 5, RGB(0, 0, 0));
+	CBrush brush;
+	brush.CreateSolidBrush(RGB(128, 224, 255));
+
+	CPen* oldPen = pDC->SelectObject(&pen);
+	CBrush* oldBrush = pDC->SelectObject(&brush);
+
+	CPoint left[] = {
+		CPoint(0, 0.075 * rect.bottom),
+		CPoint(0.16 * rect.right,0.2*rect.bottom),
+		CPoint(0.18 * rect.right , 0.3 * rect.bottom),
+		CPoint(0.188*rect.right,0.6*rect.bottom),
+		CPoint(0.19*rect.right,0.7*rect.bottom),
+		CPoint(0.19*rect.right,0.7*rect.bottom),
+		CPoint(0, 0.85*rect.bottom)
+	};
+
+	CPoint right[]{
+		CPoint(rect.right, 0.075 * rect.bottom),
+		CPoint(0.84 * rect.right,0.2*rect.bottom),
+		CPoint(0.82 * rect.right , 0.3 * rect.bottom),
+		CPoint(0.812*rect.right,0.6*rect.bottom),
+		CPoint(0.81*rect.right,0.7*rect.bottom),
+		CPoint(0.81*rect.right,0.7*rect.bottom),
+		CPoint(rect.right, 0.85*rect.bottom)
+	};
+
+	CPoint center[]
+	{
+		CPoint(0.2*rect.right, 0.05*rect.bottom),
+		CPoint(0.15*rect.right, 0.05*rect.bottom),//
+		CPoint(0.15*rect.right, 0.1*rect.bottom),//
+		CPoint(0.2*rect.right, 0.55*rect.bottom),
+		CPoint(0.2*rect.right, 0.65*rect.bottom),//
+		CPoint(0.35*rect.right, 0.65*rect.bottom),//
+		CPoint(0.5*rect.right, 0.6*rect.bottom),
+		CPoint(0.65*rect.right, 0.65*rect.bottom),//
+		CPoint(0.8*rect.right, 0.65*rect.bottom),//
+		CPoint(0.8*rect.right, 0.55*rect.bottom),
+		CPoint(0.85*rect.right, 0.1*rect.bottom),//
+		CPoint(0.85*rect.right, 0.05*rect.bottom),
+		CPoint(0.8*rect.right, 0.05*rect.bottom),
+		CPoint(0.5*rect.right, 0.1*rect.bottom),//
+		CPoint(0.5*rect.right, 0.1*rect.bottom),//
+		CPoint(0.2*rect.right, 0.05*rect.bottom)
+	};
+	pDC->BeginPath();
+
+	pDC->PolyBezier(left, 7);
+	pDC->PolyBezier(right, 7);
+	pDC->PolyBezier(center, 13);
+
+	pDC->EndPath();
+	pDC->StrokeAndFillPath();
+
+
+	pDC->SelectObject(oldPen);
+	pDC->SelectObject(oldBrush);
+
+	brush.DeleteObject();
+	pen.DeleteObject();
+}
+
+void CGDIView::DrawSmoothDashbouard(CDC* pDC, CRect rect)
+{
+	CPen pen(PS_SOLID, 5, RGB(0, 0, 0));
+	CBrush brush;
+	brush.CreateSolidBrush(RGB(64, 64, 64));
+
+	CPen *oldPen = pDC->SelectObject(&pen);
+	CBrush *oldBrush = pDC->SelectObject(&brush);
+
+	CPoint dashboard[]
+	{
+		CPoint(0.80*rect.right,rect.bottom),
+		CPoint(0.80*rect.right, 0.90*rect.bottom),
+		CPoint(0.80*rect.right, 0.80*rect.bottom),
+		CPoint(0.80*rect.right, 0.68*rect.bottom),
+		CPoint(0.78*rect.right, 0.58*rect.bottom),
+		CPoint(0.74*rect.right, 0.7*rect.bottom),
+		CPoint(0.5*rect.right, 0.62*rect.bottom),
+		CPoint(0.26*rect.right, 0.70*rect.bottom),
+		CPoint(0.22*rect.right, 0.58*rect.bottom),
+		CPoint(0.20*rect.right, 0.68*rect.bottom),
+		CPoint(0.2*rect.right, 0.80*rect.bottom),
+		CPoint(0.2*rect.right, 0.9*rect.bottom),
+		CPoint(0.2*rect.right, rect.bottom)
+	};
+
+	pDC->BeginPath();
+	pDC->PolyBezier(dashboard, 13);
+	pDC->EndPath();
+	pDC->StrokeAndFillPath();
+
+	pDC->SelectObject(oldPen);
+	pDC->SelectObject(oldBrush);
+
+	pen.DeleteObject();
+	brush.DeleteObject();
 }
 
 // CGDIView printing
