@@ -11,7 +11,8 @@
 
 #include "GDIDoc.h"
 #include "GDIView.h"
-
+#define _USE_MATH_DEFINES // for C++
+#include <cmath>
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -76,24 +77,81 @@ void CGDIView::ViewInit(CDC* pDC)
 	pDC->SelectObject(oldBursh);
 	brush.DeleteObject();
 
-	//Windows
-	DrawLeftWindow(pDC, rect);
-	DrawRightWindow(pDC, rect);
-	DrawCenterWindow(pDC, rect);
+
+	//----------------
+	//DRAW
+	//----------------
+	//Windows sharp
+	//DrawLeftWindow(pDC, rect);
+	//DrawRightWindow(pDC, rect);
+	//DrawCenterWindow(pDC, rect);
+	//Dashboard sharp
+	//DrawDashboard(pDC, rect);
 
 	//Windows smooth
-	//DrawSmoothDashbouard(pDC, rect);
-
-	//Dashboard
-	DrawDashboard(pDC, rect);
-
+	DrawSmoothDashbouard(pDC, rect);
 	//Dashboard smooth
-	//DrawSmoothLeftWindow(pDC, rect);
-
-	//Instruments
+	DrawSmoothWindows(pDC, rect);
+	//Instruments - central instruments
 	DrawDataInstruments(pDC, rect);
+
+	//Watch size
+	int startX = 0.22*rect.right;
+	int startY = 0.80*rect.bottom;
+	int dodatak = startX * 0.35;
+
+	//Watch left window 1 - lower - left
+	CRect leftWatchRect1(startX, startY, startX + dodatak, startY + dodatak);
+	CString leftWatchText1[] =
+	{
+		(CString)"4",
+		(CString)"8",
+		(CString)"12",
+		(CString)"16",
+		(CString)"20",
+		(CString)"24",
+		(CString)"28",
+		(CString)"32"
+	};
+	//DrawWatch(pDC, rect, leftWatchRect1, 29, leftWatchText1, 8, M_PI / 3, 2 * M_PI / 3, 0, 0);
+	DrawAnyWatch(pDC, rect, leftWatchRect1, 29, leftWatchText1, 8, M_PI / 3, (-4 * M_PI) / 3, 0, 0);
+
+	//Watch left window 2 - upper - right
+	startX = 0.30*rect.right;
+	startY = 0.70*rect.bottom;
+	CRect leftWatchRect2(startX, startY, startX + dodatak, startY + dodatak);
+	CString leftWatchText2[] =
+	{
+		(CString)"N",
+		(CString)"NE",
+		(CString)"E",
+		(CString)"SE",
+		(CString)"S",
+		(CString)"SW",
+		(CString)"W",
+		(CString)"NW"
+	};
+	//	DrawWatch(pDC, rect, leftWatchRect2, 17, leftWatchText2, 8, M_PI / 2, M_PI / 2, 0, 0);
+	DrawAnyWatch(pDC, rect, leftWatchRect2, 17, leftWatchText2, 8, 0.0, 2 * M_PI, 0, 0);
+
+	//Watch right window 1 - lower - right
+	startX = (0.78*rect.right) - dodatak;
+	startY = 0.80*rect.bottom;
+	CRect rightWatchRect1(startX, startY, startX + dodatak, startY + dodatak);
+	CString rightWatchText1[] =
+	{
+		(CString)"-3",
+		(CString)"-2",
+		(CString)"-1",
+		(CString)"0",
+		(CString)"1",
+		(CString)"2",
+		(CString)"3"
+	};
+	DrawAnyWatch(pDC, rect, rightWatchRect1, 13, rightWatchText1, 7, 11 * M_PI / 6, M_PI / 6, 0, 0);
 }
 
+//Sharp Window
 void CGDIView::DrawLeftWindow(CDC* pDC, CRect rect)
 {
 	CPen pen(PS_SOLID, 5, RGB(0, 0, 0));
@@ -121,7 +179,7 @@ void CGDIView::DrawLeftWindow(CDC* pDC, CRect rect)
 	brush.DeleteObject();
 	pen.DeleteObject();
 }
-
+//Sharp Window
 void CGDIView::DrawCenterWindow(CDC* pDC, CRect rect)
 {
 	CPen pen(PS_SOLID, 5, RGB(0, 0, 0));
@@ -151,7 +209,7 @@ void CGDIView::DrawCenterWindow(CDC* pDC, CRect rect)
 	brush.DeleteObject();
 	pen.DeleteObject();
 }
-
+//Sharp Window
 void CGDIView::DrawRightWindow(CDC* pDC, CRect rect)
 {
 	CPen pen(PS_SOLID, 5, RGB(0, 0, 0));
@@ -179,7 +237,7 @@ void CGDIView::DrawRightWindow(CDC* pDC, CRect rect)
 	brush.DeleteObject();
 	pen.DeleteObject();
 }
-
+//Sharp Dashboard
 void CGDIView::DrawDashboard(CDC* pDC, CRect rect)
 {
 	CPen pen(PS_SOLID, 5, RGB(0, 0, 0));
@@ -210,85 +268,8 @@ void CGDIView::DrawDashboard(CDC* pDC, CRect rect)
 	brush.DeleteObject();
 }
 
-void CGDIView::DrawDataInstruments(CDC* pDC, CRect rect)
-{
-	//Rects
-	CPen pen(PS_SOLID, 3, RGB(255, 255, 255));
-	CBrush brush;
-	brush.CreateSolidBrush(RGB(32, 32, 32));
-
-	CPen *oldPen = pDC->SelectObject(&pen);
-	CBrush *oldBrush = pDC->SelectObject(&brush);
-
-	pDC->RoundRect(0.39*rect.right, 0.79*rect.bottom, 0.49*rect.right, 0.99*rect.bottom, 0.01*rect.right, 0.01*rect.right);
-	pDC->RoundRect(0.51*rect.right, 0.79*rect.bottom, 0.61*rect.right, 0.99*rect.bottom, 0.01*rect.right, 0.01*rect.right);
-
-	pDC->SelectObject(oldBrush);
-	pDC->SelectObject(oldPen);
-
-	pen.DeleteObject();
-	brush.DeleteObject();
-
-	//Text
-	CFont font;
-	CFont *oldFont = pDC->SelectObject(&font);
-	LPCTSTR fontStyle = (LPCTSTR)"Arial";
-	int fontSize = rect.right * 0.012;
-	font.CreateFont(fontSize, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, fontStyle);
-	pDC->SelectObject(&font);
-
-	pDC->SetTextAlign(TA_LEFT);
-	int oldMode = pDC->SetBkMode(TRANSPARENT);
-
-	COLORREF oldColor = pDC->SetTextColor(RGB(0, 153, 0));
-
-	int x = 0.395*rect.right;
-	int y = 0.81*rect.bottom;
-
-	//Left align text
-	CString s[] = {
-		(CString)"353mph",
-		(CString)"H: 23'",
-		(CString)"A: 284'",
-		(CString)"1217lpm'"
-	};
-	for (int i = 0; i < 4; i++)
-	{
-		if (i == 0)
-		{
-			pDC->TextOut(x, y, s[i]);
-			continue;
-		}
-		pDC->TextOut(x, y + fontSize * i * 1.5, s[i]);
-	}
-
-	//Right align text
-	pDC->SetTextAlign(TA_RIGHT);
-	CString s1[] = {
-		(CString)"1285m",
-		(CString)"43°1478'",
-		(CString)"12°13'18'",
-		(CString)"13:48"
-	};
-	x = 0.485*rect.right;
-	for (int i = 0; i < 4; i++)
-	{
-		if (i == 0)
-		{
-			pDC->TextOut(x, y, s1[i]);
-			continue;
-		}
-		pDC->TextOut(x, y + fontSize * i*1.5, s1[i]);
-	}
-
-	pDC->SetTextColor(oldColor);
-	pDC->SelectObject(oldFont);
-	pDC->SetBkMode(oldMode);
-
-	font.DeleteObject();
-}
-
-void CGDIView::DrawSmoothLeftWindow(CDC* pDC, CRect rect)
+//Smooth Window
+void CGDIView::DrawSmoothWindows(CDC* pDC, CRect rect)
 {
 
 	CPen pen(PS_SOLID, 5, RGB(0, 0, 0));
@@ -337,6 +318,7 @@ void CGDIView::DrawSmoothLeftWindow(CDC* pDC, CRect rect)
 		CPoint(0.5*rect.right, 0.1*rect.bottom),//
 		CPoint(0.2*rect.right, 0.05*rect.bottom)
 	};
+
 	pDC->BeginPath();
 
 	pDC->PolyBezier(left, 7);
@@ -344,8 +326,8 @@ void CGDIView::DrawSmoothLeftWindow(CDC* pDC, CRect rect)
 	pDC->PolyBezier(center, 13);
 
 	pDC->EndPath();
-	pDC->StrokeAndFillPath();
 
+	pDC->StrokeAndFillPath();
 
 	pDC->SelectObject(oldPen);
 	pDC->SelectObject(oldBrush);
@@ -353,7 +335,7 @@ void CGDIView::DrawSmoothLeftWindow(CDC* pDC, CRect rect)
 	brush.DeleteObject();
 	pen.DeleteObject();
 }
-
+//Smooth Dashboard
 void CGDIView::DrawSmoothDashbouard(CDC* pDC, CRect rect)
 {
 	CPen pen(PS_SOLID, 5, RGB(0, 0, 0));
@@ -392,8 +374,275 @@ void CGDIView::DrawSmoothDashbouard(CDC* pDC, CRect rect)
 	brush.DeleteObject();
 }
 
-// CGDIView printing
+//Central instruments
+void CGDIView::DrawDataInstruments(CDC* pDC, CRect rect)
+{
+	//Rects
+	CPen pen(PS_SOLID, 3, RGB(255, 255, 255));
+	CBrush brush;
+	brush.CreateSolidBrush(RGB(32, 32, 32));
 
+	CPen *oldPen = pDC->SelectObject(&pen);
+	CBrush *oldBrush = pDC->SelectObject(&brush);
+
+	pDC->RoundRect(0.39*rect.right, 0.79*rect.bottom, 0.49*rect.right, 0.99*rect.bottom, 0.01*rect.right, 0.01*rect.right);
+	pDC->RoundRect(0.51*rect.right, 0.79*rect.bottom, 0.61*rect.right, 0.99*rect.bottom, 0.01*rect.right, 0.01*rect.right);
+
+	pDC->SelectObject(oldBrush);
+	pDC->SelectObject(oldPen);
+
+	pen.DeleteObject();
+	brush.DeleteObject();
+
+	//Text
+	CFont font;
+	CFont *oldFont = pDC->SelectObject(&font);
+	LPCTSTR fontStyle = (LPCTSTR)"Arial";
+	int fontHeight = 0.032*rect.bottom;
+	int fontWidth = 0.0055*rect.right;
+	font.CreateFont(fontHeight, fontWidth, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, fontStyle);
+	pDC->SelectObject(&font);
+
+	pDC->SetTextAlign(TA_LEFT);
+	int oldMode = pDC->SetBkMode(TRANSPARENT);
+
+	COLORREF oldColor = pDC->SetTextColor(RGB(0, 153, 0));
+
+	int x = 0.395*rect.right;
+	int y = 0.81*rect.bottom;
+
+	//Left align text
+	CString s[] = {
+		(CString)"353mph",
+		(CString)"H: 23'",
+		(CString)"A: 284'",
+		(CString)"1217lpm'"
+	};
+	for (int i = 0; i < 4; i++)
+	{
+		if (i == 0)
+		{
+			pDC->TextOut(x, y, s[i]);
+			continue;
+		}
+		pDC->TextOut(x, y + fontHeight * i * 1.5, s[i]);
+	}
+
+	//Right align text
+	pDC->SetTextAlign(TA_RIGHT);
+	CString s1[] = {
+		(CString)"1285m",
+		(CString)"43°1478'",
+		(CString)"12°13'18'",
+		(CString)"13:48"
+	};
+	x = 0.485*rect.right;
+	for (int i = 0; i < 4; i++)
+	{
+		if (i == 0)
+		{
+			pDC->TextOut(x, y, s1[i]);
+			continue;
+		}
+		pDC->TextOut(x, y + fontHeight * i*1.5, s1[i]);
+	}
+
+	pDC->SetTextColor(oldColor);
+	pDC->SelectObject(oldFont);
+	pDC->SetBkMode(oldMode);
+
+	font.DeleteObject();
+}
+
+void CGDIView::DrawAnyWatch(CDC* pDC, CRect rect, CRect rcWatch, int nNotch, CString arsValues[], int nValues, double dAngleStart, double dAngleStop, int typeNeedle, double dAngleNeedle)
+{
+	//Draw circle
+	CPen pen(PS_SOLID, 1, RGB(255, 255, 255));
+	CBrush brush;
+	brush.CreateSolidBrush(RGB(0, 0, 0));
+
+	CPen *oldPen = pDC->SelectObject(&pen);
+	CBrush *oldBrush = pDC->SelectObject(&brush);
+
+	pDC->Ellipse(rcWatch);
+
+	pDC->SelectObject(oldPen);
+	pDC->SelectObject(oldBrush);
+
+	pen.DeleteObject();
+	brush.DeleteObject();
+	//Change graphics mode
+	int oldMode = pDC->SetGraphicsMode(GM_ADVANCED);
+
+	//Change coordinate org
+	pDC->SetViewportOrg(rcWatch.left + rcWatch.Width() / 2, rcWatch.top + rcWatch.Height() / 2);
+
+	//Draw notches
+	CPen penLarge(PS_SOLID, 2, RGB(255, 255, 255));
+	CPen penSmall(PS_SOLID, 1, RGB(255, 255, 255));
+
+	CPen *oldPen2 = pDC->SelectObject(&penLarge);
+
+	//Data for drawing notches
+	double angle_between_notches = (dAngleStop - dAngleStart) / (nNotch - 1);
+	XFORM xform;
+
+	for (int i = 0; i < nNotch; i++)
+	{
+		xform.eM11 = cos(dAngleStart + i * angle_between_notches);
+		xform.eM12 = -sin(dAngleStart + i * angle_between_notches);
+		xform.eM21 = sin(dAngleStart + i * angle_between_notches);
+		xform.eM22 = cos(dAngleStart + i * angle_between_notches);
+		xform.eDx = 0;
+		xform.eDy = 0;
+
+		pDC->SetWorldTransform(&xform);
+
+		if (i % 2 == 0)
+		{
+			pDC->SelectObject(&penLarge);
+			pDC->MoveTo(0.8 * rcWatch.Width() / 2, 0);
+			pDC->LineTo(0.9 * rcWatch.Width() / 2, 0);
+		}
+		else
+		{
+			pDC->SelectObject(&penSmall);
+			pDC->MoveTo(0.81 * rcWatch.Width() / 2, 0);
+			pDC->LineTo(0.9 * rcWatch.Width() / 2, 0);
+		}
+	}
+
+	pDC->SelectObject(oldPen2);
+
+	penLarge.DeleteObject();
+	penSmall.DeleteObject();
+
+	//Reset coordinate org
+	pDC->SetViewportOrg(0, 0);
+
+	//Remove transformation
+	NoTransform(pDC);
+
+	//Reset graphics mode
+	pDC->SetGraphicsMode(oldMode);
+}
+
+void CGDIView::NoTransform(CDC* pDC)
+{
+	XFORM xform;
+	xform.eM11 = 1;
+	xform.eM12 = 0;
+	xform.eM21 = 0;
+	xform.eM22 = 1;
+	xform.eDx = 0;
+	xform.eDy = 0;
+
+	pDC->SetWorldTransform(&xform);
+}
+
+//Draw any watch
+void CGDIView::DrawWatch(CDC* pDC, CRect rect, CRect rcWatch, int nNotch, CString arsValues[], int nValues, double dAngleStart, double dAngleStop, int typeNeedle, double dAngleNeedle)
+{
+	//rcWatch - pravougaonik za sat
+	//nNotch - broj podeoka
+	//arsValues - niz stringova za svaki podeok
+	//nValues - broj stringova koje treba prikazati
+	//dAngleStart - ugao od koga pocinju da se iscrtavaju podeoci
+	//dAngleStop - ugao sa kojim se zavrsava iscrtavanje podeoka
+	//typeNeedle - tip kazaljke koju treba prikazati
+	//dAngleNeedle - ugao pod kojim se iscrtava kazaljka
+	CPen pen(PS_SOLID, 1, RGB(255, 255, 255));
+	CBrush brush;
+	brush.CreateSolidBrush(RGB(0, 0, 0));
+
+	CPen *oldPen = pDC->SelectObject(&pen);
+	CBrush *oldBrush = pDC->SelectObject(&brush);
+
+	//Crtanje kruga
+	pDC->Ellipse(rcWatch);
+
+	pDC->SelectObject(oldPen);
+	pDC->SelectObject(oldBrush);
+
+	pen.DeleteObject();
+	brush.DeleteObject();
+
+	double angleTotal = 2 * M_PI - abs(dAngleStop - dAngleStart);
+	double angleStep = angleTotal / (nNotch - 1);
+	double angle = M_PI / 2 - dAngleStart;
+
+	int oldBKMode = pDC->SetBkMode(TRANSPARENT);
+	int i;
+	int j = 0;
+	XFORM Xform, XformOld;
+	BOOL b = GetWorldTransform(pDC->m_hDC, &XformOld);
+
+	int jump = (nNotch - 1) / nValues;
+	if ((nNotch - 1) % nValues != 0)
+		jump++;
+
+	int prevMode = SetGraphicsMode(pDC->m_hDC, GM_ADVANCED);
+	for (i = 0; i < nNotch; i++)
+	{
+		int a = i % 2 ? 1 : 3;
+
+		CPen pen(PS_SOLID, a, RGB(255, 255, 255));
+		CPen* pOldPen = pDC->SelectObject(&pen);
+
+		double length = i % 2 ? rcWatch.Width() / 25 : rcWatch.Width() / 22;
+
+		Xform.eM11 = 1;
+		Xform.eM12 = 0;
+		Xform.eM21 = 0;
+		Xform.eM22 = 1;
+		Xform.eDx = -rcWatch.left - rcWatch.Width() / 2;
+		Xform.eDy = -rcWatch.top - rcWatch.Height() / 2;
+		b = SetWorldTransform(pDC->m_hDC, &Xform);
+
+		Xform.eM11 = cos(angle);
+		Xform.eM12 = sin(angle);
+		Xform.eM21 = -sin(angle);
+		Xform.eM22 = cos(angle);
+		Xform.eDx = rcWatch.left + rcWatch.Width() / 2;
+		Xform.eDy = rcWatch.top + rcWatch.Height() / 2;
+		b = ModifyWorldTransform(pDC->m_hDC, &Xform, MWT_RIGHTMULTIPLY);
+
+		angle += angleStep;
+		pDC->MoveTo(rcWatch.left + rcWatch.Width() / 2, rcWatch.top + 10);
+		pDC->LineTo(rcWatch.left + rcWatch.Width() / 2, rcWatch.top + 10 + length);
+
+		if (i%jump == 0)
+		{
+			if (j != nValues)
+			{
+				CFont font;
+
+				font.CreateFontW(12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, CString("Arial"));
+				CFont* pOldFont = pDC->SelectObject(&font);
+				COLORREF oldColor = pDC->SetTextColor(RGB(255, 255, 255));
+				pDC->TextOut(rcWatch.left + (rcWatch.bottom*0.02) + rcWatch.Width() / 2 - pDC->GetTextExtent(arsValues[j]).cx / 2, rcWatch.top + length + 10, arsValues[j]);
+				j++;
+				pDC->SelectObject(pOldFont);
+				font.DeleteObject();
+				pDC->SetTextColor(oldColor);
+			}
+		}
+		pDC->SelectObject(pOldPen);
+		pen.DeleteObject();
+	}
+	b = SetWorldTransform(pDC->m_hDC, &XformOld);
+	SetGraphicsMode(pDC->m_hDC, prevMode);
+	pDC->SetBkMode(oldBKMode);
+}
+
+
+
+
+
+
+
+
+// CGDIView printing
 BOOL CGDIView::OnPreparePrinting(CPrintInfo* pInfo)
 {
 	// default preparation

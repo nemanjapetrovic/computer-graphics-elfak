@@ -22,16 +22,34 @@ public:
 	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 
+	//---------------------
+	//My functions
+	//---------------------
+
+	//Init for drawing
 	void ViewInit(CDC* pDC);
 
+	//Sharp windows
 	void DrawLeftWindow(CDC* pDC, CRect rect);
 	void DrawCenterWindow(CDC* pDC, CRect rect);
 	void DrawRightWindow(CDC* pDC, CRect rect);
+	//Sharp Dashboard
 	void DrawDashboard(CDC* pDC, CRect rect);
+
+	//Smooth window
+	void DrawSmoothWindows(CDC* pDC, CRect rect);
+	//Smooth dashboard
+	void DrawSmoothDashbouard(CDC* pDC, CRect rect);
+
+	//Central instruments
 	void DrawDataInstruments(CDC* pDC, CRect rect);
 
-	void DrawSmoothLeftWindow(CDC* pDC, CRect rect);
-	void DrawSmoothDashbouard(CDC* pDC, CRect rect);
+	//Tranform
+	void NoTransform(CDC* pDC);
+
+	//Other circle instruments
+	void DrawAnyWatch(CDC* pDC, CRect rect, CRect rcWatch, int nNotch, CString arsValues[], int nValues, double dAngleStart, double dAngleStop, int typeNeedle, double dAngleNeedle);
+	void DrawWatch(CDC* pDC, CRect rect, CRect rcWatch, int nNotch, CString arsValues[], int nValues, double dAngleStart, double dAngleStop, int typeNeedle, double dAngleNeedle);
 protected:
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
 	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
