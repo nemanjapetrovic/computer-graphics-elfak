@@ -149,6 +149,14 @@ void CGDIView::ViewInit(CDC* pDC)
 		(CString)"3"
 	};
 	DrawAnyWatch(pDC, rect, rightWatchRect1, 13, rightWatchText1, 7, 11 * M_PI / 6, M_PI / 6, 0, 0);
+
+	//Tilt Plane watch
+	startX = (0.70*rect.right) - dodatak;
+	startY = 0.70*rect.bottom;
+	Rotate(pDC, M_PI / 6);
+	CRect tiltPlaneWatch(startX, startY, startX + dodatak, startY + dodatak);
+	DrawWatchTilt(pDC, rect, tiltPlaneWatch, M_PI / 9);
+	NoTransform(pDC);
 }
 
 //Sharp Window
@@ -489,14 +497,7 @@ void CGDIView::DrawAnyWatch(CDC* pDC, CRect rect, CRect rcWatch, int nNotch, CSt
 
 	for (int i = 0; i < nNotch; i++)
 	{
-		xform.eM11 = cos(dAngleStart + i * angle_between_notches);
-		xform.eM12 = -sin(dAngleStart + i * angle_between_notches);
-		xform.eM21 = sin(dAngleStart + i * angle_between_notches);
-		xform.eM22 = cos(dAngleStart + i * angle_between_notches);
-		xform.eDx = 0;
-		xform.eDy = 0;
-
-		pDC->SetWorldTransform(&xform);
+		Rotate(pDC, (dAngleStart + i * angle_between_notches));
 
 		if (i % 2 == 0)
 		{
@@ -527,6 +528,40 @@ void CGDIView::DrawAnyWatch(CDC* pDC, CRect rect, CRect rcWatch, int nNotch, CSt
 	pDC->SetGraphicsMode(oldMode);
 }
 
+void CGDIView::DrawWatchTilt(CDC* pDC, CRect rect, CRect rcWatch, double dAngleTilt)
+{
+	//Top parth brush
+	CBrush brushBlue;
+	brushBlue.CreateSolidBrush(RGB(48, 176, 224));
+	CBrush *oldBrush = pDC->SelectObject(&brushBlue);
+
+	int oldDirection = pDC->SetArcDirection(AD_CLOCKWISE);
+
+	//Top parth of watch
+	pDC->BeginPath();
+	pDC->Arc(rcWatch, CPoint(rcWatch.left, rcWatch.top + rcWatch.Height() / 2), CPoint(rcWatch.left + rcWatch.Width(), rcWatch.top + rcWatch.Height() / 2));
+	pDC->EndPath();
+	pDC->FillPath();
+
+	//Bottom parth brush
+	CBrush brushYellow;
+	brushYellow.CreateSolidBrush(RGB(208, 176, 128));
+	pDC->SelectObject(&brushYellow);
+
+	//Bottom parth of watch
+	pDC->BeginPath();
+	pDC->Arc(rcWatch, CPoint(rcWatch.left + rcWatch.Width(), rcWatch.top + rcWatch.Height() / 2), CPoint(rcWatch.left, rcWatch.top + rcWatch.Height() / 2));
+	pDC->EndPath();
+	pDC->FillPath();
+
+	//Reset
+	pDC->SelectObject(oldBrush);
+	pDC->SetArcDirection(oldDirection);
+	brushBlue.DeleteObject();
+	brushYellow.DeleteObject();
+	NoTransform(pDC);
+}
+
 void CGDIView::NoTransform(CDC* pDC)
 {
 	XFORM xform;
@@ -534,6 +569,19 @@ void CGDIView::NoTransform(CDC* pDC)
 	xform.eM12 = 0;
 	xform.eM21 = 0;
 	xform.eM22 = 1;
+	xform.eDx = 0;
+	xform.eDy = 0;
+
+	pDC->SetWorldTransform(&xform);
+}
+
+void CGDIView::Rotate(CDC* pDC, double angle)
+{
+	XFORM xform;
+	xform.eM11 = cos(angle);
+	xform.eM12 = -sin(angle);
+	xform.eM21 = sin(angle);
+	xform.eM22 = cos(angle);
 	xform.eDx = 0;
 	xform.eDy = 0;
 
