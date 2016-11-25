@@ -113,7 +113,6 @@ void CGDIView::ViewInit(CDC* pDC)
 		(CString)"28",
 		(CString)"32"
 	};
-	//DrawWatch(pDC, rect, leftWatchRect1, 29, leftWatchText1, 8, M_PI / 3, 2 * M_PI / 3, 0, 0);
 	DrawAnyWatch(pDC, rect, leftWatchRect1, 29, leftWatchText1, 8, M_PI / 3, (-4 * M_PI) / 3, 0, 0);
 
 	//Watch left window 2 - upper - right
@@ -122,16 +121,15 @@ void CGDIView::ViewInit(CDC* pDC)
 	CRect leftWatchRect2(startX, startY, startX + dodatak, startY + dodatak);
 	CString leftWatchText2[] =
 	{
-		(CString)"N",
-		(CString)"NE",
 		(CString)"E",
-		(CString)"SE",
-		(CString)"S",
-		(CString)"SW",
+		(CString)"NE",
+		(CString)"N",
+		(CString)"NW",
 		(CString)"W",
-		(CString)"NW"
+		(CString)"SW",
+		(CString)"S",
+		(CString)"SE"
 	};
-	//	DrawWatch(pDC, rect, leftWatchRect2, 17, leftWatchText2, 8, M_PI / 2, M_PI / 2, 0, 0);
 	DrawAnyWatch(pDC, rect, leftWatchRect2, 17, leftWatchText2, 8, 0.0, 2 * M_PI, 0, 0);
 
 	//Watch right window 1 - lower - right
@@ -153,10 +151,41 @@ void CGDIView::ViewInit(CDC* pDC)
 	//Tilt Plane watch
 	startX = (0.70*rect.right) - dodatak;
 	startY = 0.70*rect.bottom;
-	Rotate(pDC, M_PI / 6);
 	CRect tiltPlaneWatch(startX, startY, startX + dodatak, startY + dodatak);
 	DrawWatchTilt(pDC, rect, tiltPlaneWatch, M_PI / 9);
-	NoTransform(pDC);
+
+	//Left fuel
+	CRect rectFuelLeft(0.39*rect.right, 0.67*rect.bottom, 0.49*rect.right, 0.77*rect.bottom);
+	double proportionLeft[]
+	{
+		1.0,
+		1.0,
+		1.0
+	};
+	COLORREF colorLeft[]
+	{
+		RGB(255,255,255),
+		RGB(255,255,255),
+		RGB(255,255,255)
+	};
+	DrawFuelWatch(pDC, rect, rectFuelLeft, proportionLeft, 0, colorLeft, 0.0);
+
+	//Right fuel
+	CRect rectFuelRight(0.51*rect.right, 0.67*rect.bottom, 0.61*rect.right, 0.77*rect.bottom);
+	double proportionRight[]
+	{
+		1.0,
+		1.0,
+		1.0
+	};
+	COLORREF colorRight[]
+	{
+		RGB(255,255,255),
+		RGB(255,255,255),
+		RGB(255,255,255)
+	};
+	DrawFuelWatch(pDC, rect, rectFuelRight, proportionRight, 0, colorRight, 0.0);
+
 }
 
 //Sharp Window
@@ -479,22 +508,18 @@ void CGDIView::DrawAnyWatch(CDC* pDC, CRect rect, CRect rcWatch, int nNotch, CSt
 
 	pen.DeleteObject();
 	brush.DeleteObject();
-	//Change graphics mode
-	int oldMode = pDC->SetGraphicsMode(GM_ADVANCED);
 
-	//Change coordinate org
-	pDC->SetViewportOrg(rcWatch.left + rcWatch.Width() / 2, rcWatch.top + rcWatch.Height() / 2);
-
-	//Draw notches
+	//Notches pens
 	CPen penLarge(PS_SOLID, 2, RGB(255, 255, 255));
 	CPen penSmall(PS_SOLID, 1, RGB(255, 255, 255));
-
 	CPen *oldPen2 = pDC->SelectObject(&penLarge);
+
+	//Set transformation data
+	int oldMode = pDC->SetGraphicsMode(GM_ADVANCED);
+	pDC->SetViewportOrg(rcWatch.left + rcWatch.Width() / 2, rcWatch.top + rcWatch.Height() / 2);
 
 	//Data for drawing notches
 	double angle_between_notches = (dAngleStop - dAngleStart) / (nNotch - 1);
-	XFORM xform;
-
 	for (int i = 0; i < nNotch; i++)
 	{
 		Rotate(pDC, (dAngleStart + i * angle_between_notches));
@@ -511,31 +536,39 @@ void CGDIView::DrawAnyWatch(CDC* pDC, CRect rect, CRect rcWatch, int nNotch, CSt
 			pDC->MoveTo(0.81 * rcWatch.Width() / 2, 0);
 			pDC->LineTo(0.9 * rcWatch.Width() / 2, 0);
 		}
+
+		//Here goes the text drawing
 	}
 
+	//Reset transformation
+	NoTransform(pDC);
+	//Reset data
 	pDC->SelectObject(oldPen2);
-
 	penLarge.DeleteObject();
 	penSmall.DeleteObject();
 
-	//Reset coordinate org
-	pDC->SetViewportOrg(0, 0);
-
-	//Remove transformation
+	//Reset transformation
 	NoTransform(pDC);
-
-	//Reset graphics mode
+	pDC->SetViewportOrg(0, 0);
 	pDC->SetGraphicsMode(oldMode);
 }
 
 void CGDIView::DrawWatchTilt(CDC* pDC, CRect rect, CRect rcWatch, double dAngleTilt)
 {
+	//White pen
+	CPen pen(PS_SOLID, 6, RGB(255, 255, 255));
+	CPen *oldPen = pDC->SelectObject(&pen);
+
+	//Draw circle
+	pDC->Ellipse(rcWatch);
+
+	//SaveOldDirection of the ARC
+	int oldDirection = pDC->SetArcDirection(AD_CLOCKWISE);
+
 	//Top parth brush
 	CBrush brushBlue;
 	brushBlue.CreateSolidBrush(RGB(48, 176, 224));
 	CBrush *oldBrush = pDC->SelectObject(&brushBlue);
-
-	int oldDirection = pDC->SetArcDirection(AD_CLOCKWISE);
 
 	//Top parth of watch
 	pDC->BeginPath();
@@ -555,11 +588,135 @@ void CGDIView::DrawWatchTilt(CDC* pDC, CRect rect, CRect rcWatch, double dAngleT
 	pDC->FillPath();
 
 	//Reset
-	pDC->SelectObject(oldBrush);
-	pDC->SetArcDirection(oldDirection);
+	pDC->SelectObject(oldPen);//Pen
+	pDC->SelectObject(oldBrush);//Brush
+	pDC->SetArcDirection(oldDirection);//ARC-direction
+	pen.DeleteObject();
 	brushBlue.DeleteObject();
 	brushYellow.DeleteObject();
+
+	//Set for transformation
+	int oldMode = pDC->SetGraphicsMode(GM_ADVANCED);
+	pDC->SetViewportOrg(rcWatch.left + rcWatch.Width() / 2, rcWatch.top + rcWatch.Height() / 2);
+	double rotationAngle = M_PI / 9 - dAngleTilt;//Used to rotate the whole watch but without background
+	Rotate(pDC, rotationAngle);
+
+	//Pens
+	CPen penSmall(PS_SOLID, 1, RGB(255, 255, 255));
+	CPen penLarge(PS_SOLID, 2, RGB(255, 255, 255));
+	CPen *oldPen2 = pDC->SelectObject(&penLarge);
+
+	//Middle line
+	pDC->MoveTo(-rcWatch.Width() / 2, 0);
+	pDC->LineTo(rcWatch.Width() / 2, 0);
+
+	//Reset transformation
 	NoTransform(pDC);
+
+	//Top watch notches
+	int numNotches = 13;
+	double angleStart = M_PI / 6;
+	double angleEnd = 5 * M_PI / 6;
+	double angle_between_notches = (angleEnd - angleStart) / (numNotches - 1);
+	for (int i = 0; i < numNotches; i++)
+	{
+		//Set new rotation transformation
+		Rotate(pDC, angleStart + i * angle_between_notches + rotationAngle);
+
+		if (i % 3 == 0)
+		{
+			//Large notches
+			pDC->SelectObject(&penLarge);
+			pDC->MoveTo(0.8*rcWatch.Width() / 2, 0);
+			pDC->LineTo(0.9*rcWatch.Width() / 2, 0);
+		}
+		else
+		{
+			//Small notches
+			if (i == 1 || i == 2 || i == 10 || i == 11)
+			{
+				continue;
+			}
+			pDC->SelectObject(&penSmall);
+			pDC->MoveTo(0.81*rcWatch.Width() / 2, 0);
+			pDC->LineTo(0.9*rcWatch.Width() / 2, 0);
+		}
+	}
+
+	//Reset transformation
+	NoTransform(pDC);
+
+	//Down lines - long notches
+	numNotches = 5;
+	angleStart = -M_PI / 6;
+	angleEnd = -5 * M_PI / 6;
+	angle_between_notches = (angleEnd - angleStart) / (numNotches - 1);
+	for (int i = 0; i < numNotches; i++)
+	{
+		Rotate(pDC, angleStart + i*angle_between_notches + rotationAngle);
+		pDC->MoveTo(0, 0);
+		pDC->LineTo(0.8*rcWatch.Width() / 2, 0);
+	}
+
+	//Reset transformation
+	NoTransform(pDC);
+	pDC->SetViewportOrg(0, 0);
+	pDC->SetGraphicsMode(oldMode);
+
+	//Reset
+	pDC->SelectObject(oldPen);
+	penSmall.DeleteObject();
+	penLarge.DeleteObject();
+}
+
+void CGDIView::DrawFuelWatch(CDC* pDC, CRect rcView, CRect rcWatch, double ardProportion[], int nParts, COLORREF arClrProportion[], double dAngleNeedle)
+{
+	CPen pen(PS_SOLID, 1, RGB(255, 255, 255));
+	CBrush brush;
+	brush.CreateSolidBrush(RGB(0, 0, 0));
+
+	CPen *oldPen = pDC->SelectObject(&pen);
+	CBrush *oldBrush = pDC->SelectObject(&brush);
+
+	pDC->Rectangle(&rcWatch);
+
+
+	//Drawing fule watch border
+	//Top part
+	pDC->MoveTo(rcWatch.left, rcWatch.top + rcWatch.Height()*0.4);
+	CPoint top[]
+	{
+		CPoint(rcWatch.left , rcWatch.top + rcWatch.Height()*0.4),
+		CPoint(rcWatch.left + rcWatch.Width() / 2,rcWatch.top - rcWatch.Height()*0.4),
+		CPoint(rcWatch.left + rcWatch.Width(),rcWatch.top + rcWatch.Height()*0.4)
+	};
+	pDC->PolyBezierTo(top, 3);
+
+	//Right line
+	pDC->MoveTo(rcWatch.left + rcWatch.Width(), rcWatch.top + rcWatch.Height()*0.4);
+	pDC->LineTo(rcWatch.left + rcWatch.Width()*0.7, rcWatch.top + rcWatch.Height() - 1);
+
+	//Bottom part
+	pDC->MoveTo(rcWatch.left + rcWatch.Width()*0.7, rcWatch.top + rcWatch.Height() - 1);
+	CPoint bottom[]
+	{
+		CPoint(rcWatch.left + rcWatch.Width()*0.7,rcWatch.top + rcWatch.Height()),
+		CPoint(rcWatch.left + rcWatch.Width() / 2,rcWatch.top + rcWatch.Height()*0.4),
+		CPoint(rcWatch.left + rcWatch.Width()*0.3,rcWatch.top + rcWatch.Height())
+	};
+	pDC->PolyBezierTo(bottom, 3);
+
+	//Left line
+	pDC->MoveTo(rcWatch.left + rcWatch.Width()*0.3, rcWatch.top + rcWatch.Height());
+	pDC->LineTo(rcWatch.left, rcWatch.top + rcWatch.Height()*0.4);
+
+	pDC->SelectObject(oldPen);
+	pDC->SelectObject(oldBrush);
+
+	pen.DeleteObject();
+	brush.DeleteObject();
+
+
 }
 
 void CGDIView::NoTransform(CDC* pDC)
@@ -588,104 +745,18 @@ void CGDIView::Rotate(CDC* pDC, double angle)
 	pDC->SetWorldTransform(&xform);
 }
 
-//Draw any watch
-void CGDIView::DrawWatch(CDC* pDC, CRect rect, CRect rcWatch, int nNotch, CString arsValues[], int nValues, double dAngleStart, double dAngleStop, int typeNeedle, double dAngleNeedle)
+void CGDIView::TranslateRotate(CDC* pDC, double angle, int x, int y)
 {
-	//rcWatch - pravougaonik za sat
-	//nNotch - broj podeoka
-	//arsValues - niz stringova za svaki podeok
-	//nValues - broj stringova koje treba prikazati
-	//dAngleStart - ugao od koga pocinju da se iscrtavaju podeoci
-	//dAngleStop - ugao sa kojim se zavrsava iscrtavanje podeoka
-	//typeNeedle - tip kazaljke koju treba prikazati
-	//dAngleNeedle - ugao pod kojim se iscrtava kazaljka
-	CPen pen(PS_SOLID, 1, RGB(255, 255, 255));
-	CBrush brush;
-	brush.CreateSolidBrush(RGB(0, 0, 0));
+	XFORM xform;
+	xform.eM11 = cos(angle);
+	xform.eM12 = -sin(angle);
+	xform.eM21 = sin(angle);
+	xform.eM22 = cos(angle);
+	xform.eDx = x;
+	xform.eDy = y;
 
-	CPen *oldPen = pDC->SelectObject(&pen);
-	CBrush *oldBrush = pDC->SelectObject(&brush);
-
-	//Crtanje kruga
-	pDC->Ellipse(rcWatch);
-
-	pDC->SelectObject(oldPen);
-	pDC->SelectObject(oldBrush);
-
-	pen.DeleteObject();
-	brush.DeleteObject();
-
-	double angleTotal = 2 * M_PI - abs(dAngleStop - dAngleStart);
-	double angleStep = angleTotal / (nNotch - 1);
-	double angle = M_PI / 2 - dAngleStart;
-
-	int oldBKMode = pDC->SetBkMode(TRANSPARENT);
-	int i;
-	int j = 0;
-	XFORM Xform, XformOld;
-	BOOL b = GetWorldTransform(pDC->m_hDC, &XformOld);
-
-	int jump = (nNotch - 1) / nValues;
-	if ((nNotch - 1) % nValues != 0)
-		jump++;
-
-	int prevMode = SetGraphicsMode(pDC->m_hDC, GM_ADVANCED);
-	for (i = 0; i < nNotch; i++)
-	{
-		int a = i % 2 ? 1 : 3;
-
-		CPen pen(PS_SOLID, a, RGB(255, 255, 255));
-		CPen* pOldPen = pDC->SelectObject(&pen);
-
-		double length = i % 2 ? rcWatch.Width() / 25 : rcWatch.Width() / 22;
-
-		Xform.eM11 = 1;
-		Xform.eM12 = 0;
-		Xform.eM21 = 0;
-		Xform.eM22 = 1;
-		Xform.eDx = -rcWatch.left - rcWatch.Width() / 2;
-		Xform.eDy = -rcWatch.top - rcWatch.Height() / 2;
-		b = SetWorldTransform(pDC->m_hDC, &Xform);
-
-		Xform.eM11 = cos(angle);
-		Xform.eM12 = sin(angle);
-		Xform.eM21 = -sin(angle);
-		Xform.eM22 = cos(angle);
-		Xform.eDx = rcWatch.left + rcWatch.Width() / 2;
-		Xform.eDy = rcWatch.top + rcWatch.Height() / 2;
-		b = ModifyWorldTransform(pDC->m_hDC, &Xform, MWT_RIGHTMULTIPLY);
-
-		angle += angleStep;
-		pDC->MoveTo(rcWatch.left + rcWatch.Width() / 2, rcWatch.top + 10);
-		pDC->LineTo(rcWatch.left + rcWatch.Width() / 2, rcWatch.top + 10 + length);
-
-		if (i%jump == 0)
-		{
-			if (j != nValues)
-			{
-				CFont font;
-
-				font.CreateFontW(12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, CString("Arial"));
-				CFont* pOldFont = pDC->SelectObject(&font);
-				COLORREF oldColor = pDC->SetTextColor(RGB(255, 255, 255));
-				pDC->TextOut(rcWatch.left + (rcWatch.bottom*0.02) + rcWatch.Width() / 2 - pDC->GetTextExtent(arsValues[j]).cx / 2, rcWatch.top + length + 10, arsValues[j]);
-				j++;
-				pDC->SelectObject(pOldFont);
-				font.DeleteObject();
-				pDC->SetTextColor(oldColor);
-			}
-		}
-		pDC->SelectObject(pOldPen);
-		pen.DeleteObject();
-	}
-	b = SetWorldTransform(pDC->m_hDC, &XformOld);
-	SetGraphicsMode(pDC->m_hDC, prevMode);
-	pDC->SetBkMode(oldBKMode);
+	pDC->ModifyWorldTransform(&xform, MWT_LEFTMULTIPLY);
 }
-
-
-
-
 
 
 
@@ -706,7 +777,6 @@ void CGDIView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 {
 	// TODO: add cleanup after printing
 }
-
 
 // CGDIView diagnostics
 

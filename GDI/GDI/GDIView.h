@@ -44,16 +44,16 @@ public:
 	//Central instruments
 	void DrawDataInstruments(CDC* pDC, CRect rect);
 
-	//Tranform
-	void NoTransform(CDC* pDC);
-	void Rotate(CDC* pDC, double angle);
-
 	//Other circle instruments
 	void DrawAnyWatch(CDC* pDC, CRect rect, CRect rcWatch, int nNotch, CString arsValues[], int nValues, double dAngleStart, double dAngleStop, int typeNeedle, double dAngleNeedle);
 	void DrawWatchTilt(CDC* pDC, CRect rect, CRect rcWatch, double dAngleTilt);
+	void DrawFuelWatch(CDC* pDC, CRect rcView, CRect rcWatch, double ardProportion[], int nParts, COLORREF arClrProportion[], double dAngleNeedle);
 
+	//Tranform
+	void NoTransform(CDC* pDC);
+	void Rotate(CDC* pDC, double angle);
+	void TranslateRotate(CDC* pDC, double angle, int x, int y);
 
-	void DrawWatch(CDC* pDC, CRect rect, CRect rcWatch, int nNotch, CString arsValues[], int nValues, double dAngleStart, double dAngleStop, int typeNeedle, double dAngleNeedle);
 protected:
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
 	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
