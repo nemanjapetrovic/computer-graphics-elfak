@@ -49,6 +49,12 @@ public:
 	void DrawWatchTilt(CDC* pDC, CRect rect, CRect rcWatch, double dAngleTilt);
 	void DrawFuelWatch(CDC* pDC, CRect rcView, CRect rcWatch, double ardProportion[], int nParts, COLORREF arClrProportion[], double dAngleNeedle);
 
+	//Needles
+	void DrawNeedle(CDC* pDC, CRect rcView, CRect rcWatch, double dAngleNeedle, int typeNeedle);
+	HENHMETAFILE CreateNeedleFuel(CDC* pDC, CRect rcView);
+	HENHMETAFILE CreateNeedleStandrad(CDC* pDC, CRect rcView);
+	HENHMETAFILE CreateNeedlePlane(CDC* pDC, CRect rcView);
+
 	//Tranform
 	void NoTransform(CDC* pDC);
 	void Rotate(CDC* pDC, double angle);
