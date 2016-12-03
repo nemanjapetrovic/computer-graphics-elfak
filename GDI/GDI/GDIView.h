@@ -55,8 +55,14 @@ public:
 	HENHMETAFILE CreateNeedleStandrad(CDC* pDC, CRect rcView);
 	HENHMETAFILE CreateNeedlePlane(CDC* pDC, CRect rcView);
 
+	//Bitmaps
+	void DrawMap(CDC* pDC, CRect rcView, CRect rcMap, CString strImage);
+	void DrawSky(CDC* pDC, CRect rcView, double dAngle, CString strImage);
+	void DrawPlane(CDC* pDC, CRect rcView, CSize szOffset, double dScale, CString strImage);
+
 	//Tranform
 	void NoTransform(CDC* pDC);
+	void Translate(CDC* pDC, int x, int y);
 	void Rotate(CDC* pDC, double angle);
 	void TranslateRotate(CDC* pDC, double angle, int x, int y);
 

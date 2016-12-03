@@ -185,6 +185,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DImage.h" />
     <ClInclude Include="GDI.h" />
     <ClInclude Include="GDIDoc.h" />
     <ClInclude Include="GDIView.h" />
@@ -194,6 +195,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DImage.cpp" />
     <ClCompile Include="GDI.cpp" />
     <ClCompile Include="GDIDoc.cpp" />
     <ClCompile Include="GDIView.cpp" />
@@ -215,6 +217,7 @@
     <Image Include="res\GDI.ico" />
     <Image Include="res\GDIDoc.ico" />
     <Image Include="res\Toolbar.bmp" />
+    <Image Include="strImage\Suhoj.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
