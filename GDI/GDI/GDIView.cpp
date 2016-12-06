@@ -28,10 +28,11 @@ BEGIN_MESSAGE_MAP(CGDIView, CView)
 	ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CView::OnFilePrintPreview)
+	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 // CGDIView construction/destruction
-
+double angle;
 CGDIView::CGDIView()
 {
 	// TODO: add construction code here
@@ -369,21 +370,13 @@ void CGDIView::DrawSmoothWindows(CDC* pDC, CRect rect)
 	pDC->EndPath();
 
 	//Sky & Plane
-	//-----------
-	CRgn rgn;
-	rgn.CreateFromPath(pDC);
-	pDC->SelectClipRgn(&rgn);
-
+	//-----------	
 	DrawSky(pDC, rect, M_PI / 2, (CString)"strImage/Sky.jpg");
 
-	pDC->SelectClipRgn(NULL);
-
 	pDC->BeginPath();
-
 	pDC->PolyBezier(left, 7);
 	pDC->PolyBezier(right, 7);
 	pDC->PolyBezier(center, 16);
-
 	pDC->EndPath();
 	pDC->StrokePath();
 	//Sky & Plane
@@ -450,17 +443,8 @@ void CGDIView::DrawDataInstruments(CDC* pDC, CRect rect)
 	pDC->RoundRect(0.51*rect.right, 0.79*rect.bottom, 0.61*rect.right, 0.99*rect.bottom, 0.01*rect.right, 0.01*rect.right);
 
 	//Map
-	//------------
-	CRgn rgn;
-	rgn.CreateFromPath(pDC);
-	pDC->SelectClipRgn(&rgn);
-	CRect rectForMap(0.51*rect.right, 0.79*rect.bottom, 0.61*rect.right, 0.99*rect.bottom);
-	DrawMap(pDC, rect, rectForMap, (CString)"strImage/Map.png");
-	pDC->SelectClipRgn(NULL);
-	pDC->BeginPath();
-	pDC->RoundRect(0.51*rect.right, 0.79*rect.bottom, 0.61*rect.right, 0.99*rect.bottom, 0.01*rect.right, 0.01*rect.right);
-	pDC->EndPath();
-	pDC->StrokePath();
+	//------------	
+	DrawMap(pDC, rect, NULL, (CString)"strImage/Map.png");
 	//------------
 	//Map
 
@@ -1043,22 +1027,27 @@ HENHMETAFILE CGDIView::CreateNeedlePlane(CDC* pDC, CRect rcView)
 	return handler;
 }
 
-void CGDIView::DrawMap(CDC* pDC, CRect rcView, CRect rcMap, CString strImage)
+void CGDIView::DrawMap(CDC* pDC, CRect rect, CRect rcMap, CString strImage)
 {
+	CRgn rgn;
+	rgn.CreateRoundRectRgn(0.51*rect.right, 0.79*rect.bottom, 0.61*rect.right, 0.99*rect.bottom, 0.01*rect.right, 0.01*rect.right);
+	pDC->SelectClipRgn(&rgn);
+	CRect rectForMap(0.51*rect.right, 0.79*rect.bottom, 0.61*rect.right, 0.99*rect.bottom);
+
 	DImage img;
 	img.Load(strImage);
-	img.Draw(pDC, CRect(0, 0, 400, 400), rcMap);
+	img.Draw(pDC, CRect(0, 0, 400, 400), rectForMap);
+
+	pDC->SelectClipRgn(NULL);
 }
 
 void CGDIView::DrawSky(CDC* pDC, CRect rcView, double dAngle, CString strImage)
 {
 	int oldGraphicMode = pDC->SetGraphicsMode(GM_ADVANCED);
 
-	/*Translate(pDC, -rcView.left, -rcView.top);
-	Rotate(pDC, M_PI / 2);
-	Translate(pDC, rcView.left, rcView.top);*/
-
-	//TranslateRotate(pDC, dAngle, rcView.Width() / 2, rcView.Height() / 2);
+	CRgn rgn;
+	rgn.CreateFromPath(pDC);
+	pDC->SelectClipRgn(&rgn);
 
 	DImage img;
 	img.Load(strImage);
@@ -1066,7 +1055,10 @@ void CGDIView::DrawSky(CDC* pDC, CRect rcView, double dAngle, CString strImage)
 
 	DrawPlane(pDC, rcView, CSize(400, 100), 0.3, (CString)"strImage/Suhoj.bmp");
 
-	NoTransform(pDC);
+	pDC->SelectClipRgn(NULL);
+
+
+
 	pDC->SetGraphicsMode(oldGraphicMode);
 }
 
@@ -1124,6 +1116,8 @@ void CGDIView::DrawPlane(CDC* pDC, CRect rcView, CSize szOffset, double dScale, 
 	memDC->DeleteDC();
 	delete memDC;
 }
+
+
 
 void CGDIView::NoTransform(CDC* pDC)
 {
@@ -1219,3 +1213,43 @@ CGDIDoc* CGDIView::GetDocument() const // non-debug version is inline
 
 
 // CGDIView message handlers
+
+
+void CGDIView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// TODO: Add your message handler code here and/or call default
+	if (nChar == 'S')
+	{
+		CDC *pDC = GetDC();
+		CDC *memDC = new CDC();
+		memDC->CreateCompatibleDC(NULL);
+
+		CBitmap bmp;
+		CRect rect;
+		GetClientRect(&rect);
+
+		bmp.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
+
+		memDC->SelectObject(&bmp);
+		memDC->BitBlt(0, 0, rect.Width(), rect.Height(), pDC, 0, 0, SRCCOPY);
+
+		DImage img = DImage(bmp);
+		img.Save((CString)"Cocpit.bmp");
+
+		memDC->DeleteDC();
+		delete memDC;
+	}
+
+	if (nChar == 'C')
+	{
+
+	}
+
+	if (nChar == 'V')
+	{
+
+	}
+
+	Invalidate();
+	CView::OnKeyDown(nChar, nRepCnt, nFlags);
+}

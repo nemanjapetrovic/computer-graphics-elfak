@@ -56,7 +56,7 @@ public:
 	HENHMETAFILE CreateNeedlePlane(CDC* pDC, CRect rcView);
 
 	//Bitmaps
-	void DrawMap(CDC* pDC, CRect rcView, CRect rcMap, CString strImage);
+	void DrawMap(CDC* pDC, CRect rect, CRect rcMap, CString strImage);
 	void DrawSky(CDC* pDC, CRect rcView, double dAngle, CString strImage);
 	void DrawPlane(CDC* pDC, CRect rcView, CSize szOffset, double dScale, CString strImage);
 
@@ -65,6 +65,7 @@ public:
 	void Translate(CDC* pDC, int x, int y);
 	void Rotate(CDC* pDC, double angle);
 	void TranslateRotate(CDC* pDC, double angle, int x, int y);
+
 
 protected:
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
@@ -84,6 +85,9 @@ protected:
 	// Generated message map functions
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 };
 
 #ifndef _DEBUG  // debug version in GDIView.cpp
