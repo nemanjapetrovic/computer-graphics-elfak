@@ -66,6 +66,8 @@ public:
 	void Rotate(CDC* pDC, double angle);
 	void TranslateRotate(CDC* pDC, double angle, int x, int y);
 
+	//Lab 03
+	void ChangeImage(CBitmap& image, double  dBrightness, double dContrast);
 
 protected:
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
@@ -88,6 +90,7 @@ protected:
 public:
 
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 };
 
 #ifndef _DEBUG  // debug version in GDIView.cpp

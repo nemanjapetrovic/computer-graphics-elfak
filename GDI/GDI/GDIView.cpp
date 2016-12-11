@@ -29,18 +29,32 @@ BEGIN_MESSAGE_MAP(CGDIView, CView)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CView::OnFilePrintPreview)
 	ON_WM_KEYDOWN()
+	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
 // CGDIView construction/destruction
 double angle;
+double currentAngle;
+double brightness;
+double contrast;
+DImage *sky;
+DImage *map;
 CGDIView::CGDIView()
 {
 	// TODO: add construction code here
+	sky = new DImage();
+	sky->Load((CString)"strImage/sky.jpg");
+	map = new DImage();
+	map->Load((CString)"strImage/Map.png");
+	currentAngle = 0;
+	brightness = 0.2;
+	contrast = 0.1;
 
 }
 
 CGDIView::~CGDIView()
 {
+	delete sky;
 }
 
 BOOL CGDIView::PreCreateWindow(CREATESTRUCT& cs)
@@ -72,11 +86,18 @@ void CGDIView::ViewInit(CDC* pDC)
 	pDC->SetViewportExt(rect.right, -rect.bottom);
 	pDC->SetViewportOrg(0, 0);
 
+	CDC* mDC = new CDC();
+	mDC->CreateCompatibleDC(pDC);
+
+	CBitmap screen;
+	screen.CreateCompatibleBitmap(pDC, rect.right, rect.bottom);
+	mDC->SelectObject(&screen);
+
 	CBrush brush;
 	brush.CreateSolidBrush(RGB(128, 128, 128));
-	CBrush *oldBursh = pDC->SelectObject(&brush);
-	pDC->FillRect(&rect, &brush);
-	pDC->SelectObject(oldBursh);
+	CBrush *oldBursh = mDC->SelectObject(&brush);
+	mDC->FillRect(&rect, &brush);
+	mDC->SelectObject(oldBursh);
 	brush.DeleteObject();
 
 
@@ -93,11 +114,11 @@ void CGDIView::ViewInit(CDC* pDC)
 
 
 	//Windows smooth
-	DrawSmoothDashbouard(pDC, rect);
+	DrawSmoothDashbouard(mDC, rect);
 	//Dashboard smooth
-	DrawSmoothWindows(pDC, rect);
+	DrawSmoothWindows(mDC, rect);
 	//Instruments - central instruments
-	DrawDataInstruments(pDC, rect);
+	DrawDataInstruments(mDC, rect);
 
 	//Watch size
 	int startX = 0.22*rect.right;
@@ -117,7 +138,7 @@ void CGDIView::ViewInit(CDC* pDC)
 		(CString)"28",
 		(CString)"32"
 	};
-	DrawAnyWatch(pDC, rect, leftWatchRect1, 29, leftWatchText1, 8, M_PI / 3, (-4 * M_PI) / 3, 2, M_PI / 6);
+	DrawAnyWatch(mDC, rect, leftWatchRect1, 29, leftWatchText1, 8, M_PI / 3, (-4 * M_PI) / 3, 2, M_PI / 6);
 
 	//Watch left window 2 - upper - right
 	startX = 0.30*rect.right;
@@ -134,7 +155,7 @@ void CGDIView::ViewInit(CDC* pDC)
 		(CString)"S",
 		(CString)"SE"
 	};
-	DrawAnyWatch(pDC, rect, leftWatchRect2, 17, leftWatchText2, 8, 0.0, 2 * M_PI, 3, M_PI / 3);
+	DrawAnyWatch(mDC, rect, leftWatchRect2, 17, leftWatchText2, 8, 0.0, 2 * M_PI, 3, M_PI / 3);
 
 	//Watch right window 1 - lower - right
 	startX = (0.78*rect.right) - dodatak;
@@ -150,13 +171,13 @@ void CGDIView::ViewInit(CDC* pDC)
 		(CString)"2",
 		(CString)"3"
 	};
-	DrawAnyWatch(pDC, rect, rightWatchRect1, 13, rightWatchText1, 7, 11 * M_PI / 6, M_PI / 6, 2, M_PI / 6);
+	DrawAnyWatch(mDC, rect, rightWatchRect1, 13, rightWatchText1, 7, 11 * M_PI / 6, M_PI / 6, 2, M_PI / 6);
 
 	//Tilt Plane watch
 	startX = (0.70*rect.right) - dodatak;
 	startY = 0.70*rect.bottom;
 	CRect tiltPlaneWatch(startX, startY, startX + dodatak, startY + dodatak);
-	DrawWatchTilt(pDC, rect, tiltPlaneWatch, M_PI / 9);
+	DrawWatchTilt(mDC, rect, tiltPlaneWatch, M_PI / 9);
 
 	//Left fuel
 	CRect rectFuelLeft(0.39*rect.right, 0.67*rect.bottom, 0.49*rect.right, 0.77*rect.bottom);
@@ -172,7 +193,7 @@ void CGDIView::ViewInit(CDC* pDC)
 		RGB(0,255,0),
 		RGB(255,255,0)
 	};
-	DrawFuelWatch(pDC, rect, rectFuelLeft, proportionLeft, 3, colorLeft, M_PI / 3);
+	DrawFuelWatch(mDC, rect, rectFuelLeft, proportionLeft, 3, colorLeft, M_PI / 3);
 
 	//Right fuel
 	CRect rectFuelRight(0.51*rect.right, 0.67*rect.bottom, 0.61*rect.right, 0.77*rect.bottom);
@@ -188,9 +209,14 @@ void CGDIView::ViewInit(CDC* pDC)
 		RGB(0,255,0),
 		RGB(255,0,0)
 	};
-	DrawFuelWatch(pDC, rect, rectFuelRight, proportionRight, 3, colorRight, M_PI / 4);
+	DrawFuelWatch(mDC, rect, rectFuelRight, proportionRight, 3, colorRight, M_PI / 4);
 
+	ChangeImage(screen, brightness, contrast);
 
+	pDC->BitBlt(0, 0, rect.Width(), rect.Height(), mDC, 0, 0, SRCCOPY);
+
+	mDC->DeleteDC();
+	delete mDC;
 }
 
 //Sharp Window
@@ -371,7 +397,7 @@ void CGDIView::DrawSmoothWindows(CDC* pDC, CRect rect)
 
 	//Sky & Plane
 	//-----------	
-	DrawSky(pDC, rect, M_PI / 2, (CString)"strImage/Sky.jpg");
+	DrawSky(pDC, rect, currentAngle, NULL);
 
 	pDC->BeginPath();
 	pDC->PolyBezier(left, 7);
@@ -444,7 +470,7 @@ void CGDIView::DrawDataInstruments(CDC* pDC, CRect rect)
 
 	//Map
 	//------------	
-	DrawMap(pDC, rect, NULL, (CString)"strImage/Map.png");
+	DrawMap(pDC, rect, NULL, NULL);
 	//------------
 	//Map
 
@@ -1034,36 +1060,116 @@ void CGDIView::DrawMap(CDC* pDC, CRect rect, CRect rcMap, CString strImage)
 	pDC->SelectClipRgn(&rgn);
 	CRect rectForMap(0.51*rect.right, 0.79*rect.bottom, 0.61*rect.right, 0.99*rect.bottom);
 
-	DImage img;
-	img.Load(strImage);
-	img.Draw(pDC, CRect(0, 0, 400, 400), rectForMap);
+	map->Draw(pDC, CRect(0, 0, 400, 400), rectForMap);
 
 	pDC->SelectClipRgn(NULL);
 }
 
 void CGDIView::DrawSky(CDC* pDC, CRect rcView, double dAngle, CString strImage)
 {
-	int oldGraphicMode = pDC->SetGraphicsMode(GM_ADVANCED);
+	//LEFT WINDOW
+	pDC->BeginPath();
+	CPoint array_points_leftWindow[] = {
+		CPoint(0, 0.075 * rcView.bottom),
+		CPoint(0.16 * rcView.right,0.2*rcView.bottom),
+		CPoint(0.18 * rcView.right , 0.3 * rcView.bottom),
+		CPoint(0.188*rcView.right,0.6*rcView.bottom),
+		CPoint(0.19*rcView.right,0.7*rcView.bottom),
+		CPoint(0.19*rcView.right,0.7*rcView.bottom),
+		CPoint(0, 0.85*rcView.bottom)
+	};
 
-	CRgn rgn;
-	rgn.CreateFromPath(pDC);
-	pDC->SelectClipRgn(&rgn);
+	CPoint array_points_rightWindow[]{
+		CPoint(rcView.right, 0.075 * rcView.bottom),
+		CPoint(0.84 * rcView.right,0.2*rcView.bottom),
+		CPoint(0.82 * rcView.right , 0.3 * rcView.bottom),
+		CPoint(0.812*rcView.right,0.6*rcView.bottom),
+		CPoint(0.81*rcView.right,0.7*rcView.bottom),
+		CPoint(0.81*rcView.right,0.7*rcView.bottom),
+		CPoint(rcView.right, 0.85*rcView.bottom)
+	};
 
-	DImage img;
-	img.Load(strImage);
-	img.Draw(pDC, CRect(0, 0, img.Width(), img.Height()), rcView);
+	CPoint array_points_centerWindow[]
+	{
+		CPoint(0.2*rcView.right, 0.05*rcView.bottom),
+		CPoint(0.15*rcView.right, 0.05*rcView.bottom),//
+		CPoint(0.15*rcView.right, 0.1*rcView.bottom),//
+		CPoint(0.2*rcView.right, 0.55*rcView.bottom),
+		CPoint(0.2*rcView.right, 0.65*rcView.bottom),//
+		CPoint(0.35*rcView.right, 0.65*rcView.bottom),//
+		CPoint(0.5*rcView.right, 0.6*rcView.bottom),
+		CPoint(0.65*rcView.right, 0.65*rcView.bottom),//
+		CPoint(0.8*rcView.right, 0.65*rcView.bottom),//
+		CPoint(0.8*rcView.right, 0.55*rcView.bottom),
+		CPoint(0.85*rcView.right, 0.1*rcView.bottom),//
+		CPoint(0.85*rcView.right, 0.05*rcView.bottom),
+		CPoint(0.8*rcView.right, 0.05*rcView.bottom),
+		CPoint(0.5*rcView.right, 0.1*rcView.bottom),//
+		CPoint(0.5*rcView.right, 0.1*rcView.bottom),//
+		CPoint(0.2*rcView.right, 0.05*rcView.bottom)
+	};
 
-	DrawPlane(pDC, rcView, CSize(400, 100), 0.3, (CString)"strImage/Suhoj.bmp");
+	pDC->PolyBezier(array_points_leftWindow, 7);
 
-	pDC->SelectClipRgn(NULL);
+	pDC->PolyBezier(array_points_rightWindow, 7);
 
 
+	pDC->PolyBezier(array_points_centerWindow, 16);
+	pDC->EndPath();
 
-	pDC->SetGraphicsMode(oldGraphicMode);
+	CRgn* rgn_old = new CRgn();
+	rgn_old->CreateRectRgn(0, 0, rcView.right, rcView.bottom);
+
+	CRgn* rgn_new = new CRgn();
+	rgn_new->CreateFromPath(pDC);
+	pDC->SelectClipRgn(rgn_new);
+
+	int old_graphic_mode = SetGraphicsMode(pDC->m_hDC, GM_ADVANCED);
+	pDC->SetViewportOrg(rcView.Width() / 2, rcView.Height() / 2);
+
+	XFORM xform_old, xform_new;
+	GetWorldTransform(pDC->m_hDC, &xform_old);
+
+	xform_new.eM11 = 1.2;
+	xform_new.eM12 = 0;
+	xform_new.eM21 = 0;
+	xform_new.eM22 = 2.5;
+	xform_new.eDx = 0;
+	xform_new.eDy = 0;
+
+
+	pDC->SetWorldTransform(&xform_new);
+
+	xform_new.eM11 = cos(dAngle);
+	xform_new.eM12 = sin(dAngle);
+	xform_new.eM21 = -sin(dAngle);
+	xform_new.eM22 = cos(dAngle);
+	xform_new.eDx = 0;
+	xform_new.eDy = 0;
+
+	pDC->ModifyWorldTransform(&xform_new, MWT_RIGHTMULTIPLY);
+
+	sky->Draw(pDC, CRect(0, 0, sky->Width(), sky->Height()), CRect(-rcView.Width() / 2, -rcView.Height() / 2, rcView.Width() / 2, rcView.Height() / 2));
+
+	pDC->SetWorldTransform(&xform_new);
+
+	DrawPlane(pDC, rcView, CSize(0.1*rcView.right, -0.3*rcView.bottom), 0.5, NULL);
+
+	pDC->SetViewportOrg(0, 0);
+	pDC->SetWorldTransform(&xform_old);
+	SetGraphicsMode(pDC->m_hDC, old_graphic_mode);
+
+	pDC->SelectClipRgn(rgn_old);
+
+	rgn_old->DeleteObject();
+	rgn_old->DeleteObject();
+
+
 }
 
 void CGDIView::DrawPlane(CDC* pDC, CRect rcView, CSize szOffset, double dScale, CString strImage)
 {
+	//koordinatni pocetak na sredini
 	CBitmap plane;
 	BOOL suc = plane.LoadBitmapW(315);
 
@@ -1100,9 +1206,8 @@ void CGDIView::DrawPlane(CDC* pDC, CRect rcView, CSize szOffset, double dScale, 
 	dstDC->DeleteDC();
 	delete dstDC;
 
-	int top = rcView.CenterPoint().y - szOffset.cy;
-	int left = rcView.CenterPoint().x - szOffset.cx;
-
+	int top = szOffset.cy;
+	int left = szOffset.cx;
 	CDC* memDC = new CDC();
 	memDC->CreateCompatibleDC(NULL);
 	CBitmap * bmpOldT = memDC->SelectObject(&mask);
@@ -1117,6 +1222,63 @@ void CGDIView::DrawPlane(CDC* pDC, CRect rcView, CSize szOffset, double dScale, 
 	delete memDC;
 }
 
+
+void CGDIView::ChangeImage(CBitmap& image, double  dBrightness, double dContrast)
+{
+
+	BITMAP bm;
+	image.GetBitmap(&bm);
+
+	int n = bm.bmWidthBytes * bm.bmHeight;
+	BYTE* bytes = new BYTE[n];
+	int p = image.GetBitmapBits(n, bytes);
+	byte rBright = 0;
+	byte gBright = 0;
+	byte bBright = 0;
+	byte r;
+	byte g;
+	byte b;
+	double tang = tan((dContrast + 1)*M_PI / 4);
+	for (int i = 0; i < bm.bmHeight; i++)
+	{
+		for (int j = 0; j < bm.bmWidthBytes; j += 4)
+		{
+			r = bytes[i*bm.bmWidthBytes + j];
+			g = bytes[i*bm.bmWidthBytes + j + 1];
+			b = bytes[i*bm.bmWidthBytes + j + 2];
+
+			rBright = r;
+			gBright = g;
+			bBright = b;
+
+			if (dBrightness >= -1 && dBrightness <= 0)
+			{
+				rBright = r * (1.0 + dBrightness);
+				gBright = g * (1.0 + dBrightness);
+				bBright = b * (1.0 + dBrightness);
+			}
+
+			if (dBrightness > 0 && dBrightness <= 1)
+			{
+
+				rBright = r + (255 - r)* dBrightness;
+				gBright = g + (255 - g)* dBrightness;
+				bBright = b + (255 - b)* dBrightness;
+			}
+
+			rBright = (max(min((rBright - 127) * tang + 127, 255), 0));
+			gBright = (max(min((gBright - 127) * tang + 127, 255), 0));
+			bBright = (max(min((bBright - 127) * tang + 127, 255), 0));
+
+			bytes[i*bm.bmWidthBytes + j] = rBright;
+			bytes[i*bm.bmWidthBytes + j + 1] = gBright;
+			bytes[i*bm.bmWidthBytes + j + 2] = bBright;
+		}
+	}
+
+	image.SetBitmapBits(n, bytes);
+
+}
 
 
 void CGDIView::NoTransform(CDC* pDC)
@@ -1242,14 +1404,54 @@ void CGDIView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	if (nChar == 'C')
 	{
-
+		currentAngle -= 0.1;
+		Invalidate();
 	}
 
 	if (nChar == 'V')
 	{
-
+		currentAngle += 0.1;
+		Invalidate();
 	}
 
-	Invalidate();
+	if (nChar == 'D')
+	{
+		brightness -= 0.1;
+		if (brightness < -1)
+			brightness = 1;
+		Invalidate();
+	}
+	if (nChar == 'F')
+	{
+		brightness += 0.1;
+		if (brightness > 1)
+			brightness = -1;
+		Invalidate();
+	}
+
+	if (nChar == 'E')
+	{
+		contrast -= 0.1;
+		if (contrast < -1)
+			contrast = 1;
+
+		Invalidate();
+	}
+	if (nChar == 'R')
+	{
+		contrast += 0.1;
+		if (contrast > 1)
+			contrast = -1;
+
+		Invalidate();
+	}
+
 	CView::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+
+BOOL CGDIView::OnEraseBkgnd(CDC* pDC)
+{
+	// TODO: Add your message handler code here and/or call default
+	return TRUE;
 }
