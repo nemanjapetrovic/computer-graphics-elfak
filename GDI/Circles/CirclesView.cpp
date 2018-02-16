@@ -11,6 +11,7 @@
 
 #include "CirclesDoc.h"
 #include "CirclesView.h"
+#include "DImage.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -74,6 +75,7 @@ void CCirclesView::OnDraw(CDC* pDC)
 	
 	//draw..
 	DrawFannyCircle(memDC, 300, 30, 270, 9, RGB(255, 255, 255), RGB(255, 255, 255), (CString)"Text");
+	DrawAndSavePicture(memDC, (CString)"bg.bmp", 300);
 	//draw..
 	
 	memDC->SetWorldTransform(&form);
@@ -225,7 +227,25 @@ void CCirclesView::DrawFannyCircle(CDC *pDC, int radius, int nCricle, double dAl
 
 void CCirclesView::DrawAndSavePicture(CDC *pDC, CString strPicture, int radius)
 {
-	
+	int width = radius * 2;
+	int height = radius * 2;
+	width = width + (width * 0.2);
+	height = height + (height * 0.2);
+
+	CDC *memDC = new CDC();
+	memDC->CreateCompatibleDC(NULL);
+
+	CBitmap bmp;
+	bmp.CreateCompatibleBitmap(pDC, width, height);
+	memDC->SelectObject(&bmp);
+
+	memDC->BitBlt(0, 0, width, height, pDC, -width / 2, -height / 2, SRCCOPY);
+
+	DImage img(bmp);
+	img.Save(strPicture);
+
+	memDC->DeleteDC();
+	delete memDC;
 }
 
 // CCirclesView printing

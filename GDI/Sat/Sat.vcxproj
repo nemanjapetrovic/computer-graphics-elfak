@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{4F5DC336-1644-41E3-A892-6BA156961287}</ProjectGuid>
-    <RootNamespace>Circles</RootNamespace>
+    <ProjectGuid>{CD05826B-382B-47F2-A948-475F5DB99F27}</ProjectGuid>
+    <RootNamespace>Sat</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
     <Keyword>MFCProj</Keyword>
   </PropertyGroup>
@@ -185,21 +185,21 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Circles.h" />
-    <ClInclude Include="CirclesDoc.h" />
-    <ClInclude Include="CirclesView.h" />
     <ClInclude Include="DImage.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="Sat.h" />
+    <ClInclude Include="SatDoc.h" />
+    <ClInclude Include="SatView.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Circles.cpp" />
-    <ClCompile Include="CirclesDoc.cpp" />
-    <ClCompile Include="CirclesView.cpp" />
     <ClCompile Include="DImage.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="Sat.cpp" />
+    <ClCompile Include="SatDoc.cpp" />
+    <ClCompile Include="SatView.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -208,14 +208,14 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Circles.rc" />
+    <ResourceCompile Include="Sat.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Circles.rc2" />
+    <None Include="res\Sat.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\Circles.ico" />
-    <Image Include="res\CirclesDoc.ico" />
+    <Image Include="res\Sat.ico" />
+    <Image Include="res\SatDoc.ico" />
     <Image Include="res\Toolbar.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
