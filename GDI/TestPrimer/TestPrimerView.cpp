@@ -67,7 +67,10 @@ void CTestPrimerView::OnDraw(CDC* pDC)
 	int oldMode = pDC->SetGraphicsMode(GM_ADVANCED);
 	XFORM oldForm;
 	pDC->GetWorldTransform(&oldForm);
-			
+	
+	// Ako hocu
+	// => rotiraj objekat u pocetnoj tacki (x1,y1) crtanja za ugao 	
+
 	// Ako hocu
 	// => zarotiram za ugao
 	// => pomerim na neko mesto
@@ -85,9 +88,6 @@ void CTestPrimerView::OnDraw(CDC* pDC)
 	Translate(pDC, 300, 0, true);
 	pDC->Rectangle(CRect(-50,-50,50,50));
 	pDC->SetWorldTransform(&oldForm);
-
-	// Ako hocu
-	// => rotiraj objekat u pocetnoj tacki (x1,y1) crtanja za ugao 	
 
 	// Ako hocu
 	// => rotiraj u odnosu na neku tacku sa pomerajem u neko mesto

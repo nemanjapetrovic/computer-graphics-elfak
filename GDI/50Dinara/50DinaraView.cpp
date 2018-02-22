@@ -107,9 +107,9 @@ void CMy50DinaraView::DrawBackground(CDC *pDC, CPoint ptCenter, int radius)
 	int y2 = ptCenter.y + radius;
 
 	CRgn rgn;
-	rgn.CreateEllipticRgn(x1, y1, x2, y2);
+	rgn.CreateEllipticRgn(x1, y1, x2, y2);		
 	pDC->SelectClipRgn(&rgn);
-
+	
 	bg->Draw(pDC, CRect(0, 0, bg->Width(), bg->Height()), CRect(x1, y1, x2, y2));
 
 	pDC->SelectClipRgn(NULL);

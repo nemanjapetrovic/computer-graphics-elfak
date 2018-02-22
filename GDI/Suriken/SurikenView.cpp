@@ -95,7 +95,8 @@ void CSurikenView::OnDraw(CDC* pDC)
 	bark->Draw(memDC,CRect(0,0,bark->Width(),bark->Height()),CRect(rect.Width()-bark->Width(),0,rect.Width(),rect.Height()));
 	stablo_x = rect.Width() - bark->Width();
 	
-	Rotate(memDC,toRad(angle),true);
+	//########## FIX ##############
+	Rotate(memDC,toRad(angle),false);
 	Translate(memDC,start_pos_x,start_pos_y,true);
 	DrawStar(memDC,320);
 	//draw..
