@@ -65,45 +65,96 @@ void CGLRenderer::DrawScene(CDC *pDC)
     
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	gluLookAt(5.0, 5.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt(-5.0, 0.0, 7.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 	
 	glLineWidth(2.0);
-
-	//glava
-	glPushMatrix();
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glColor3f(0.6, 0.6, 0.6);
-	DrawCube();
-	glPopMatrix();
-
-	glPushMatrix();
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glColor3f(0.0, 0.0, 0.0);
-	DrawCube();	
-	glPopMatrix();
-	//------
 	
-	//telo
-	glPushMatrix();		
-	glTranslatef(0.0, -1.25, 0.0);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glColor3f(0.6, 0.6, 0.6);
 	glPushMatrix();
-	glScaled(2.0, 4.0, 2.0);
-	DrawCube();	
-	glPopMatrix();
-	glPopMatrix();
 
-	glPushMatrix();
-	glTranslatef(0.0, -1.25, 0.0);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glColor3f(0.0, 0.0, 0.0);
-	glPushMatrix();
-	glScaled(2.0, 4.0, 2.0);
-	DrawCube();
+		//telo		
+		glRotatef(12.0, 0, 1.0, 0.0);
+		glPushMatrix();
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glColor3f(1.0, 0.5, 0.7);
+			glScalef(4.0, 4.0, 2.0);
+			DrawCube();
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glColor3f(0.5, 0.5, 0.5);
+			DrawCube();
+		glPopMatrix();
+
+		//leva ruka nadlaktica
+		glPushMatrix();	
+			glTranslatef(-1.375, -0.75, 0.0);
+			glRotatef(-10.0, 1.0, 0.0, 0.0);
+			glPushMatrix();
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				glColor3f(0.5, 0.5, 0.5);
+				glScalef(1.5, 2.0, 2.0);
+				DrawCube();
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				glColor3f(1.0, 0.5, 0.7);
+				DrawCube();
+			glPopMatrix();
+	
+			//leva ruka podlaktica
+			glTranslatef(-0.0, -1.0, 0.0);
+			glRotatef(-35.0, 1.0, 0.0, 0.0);
+			glPushMatrix();
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				glColor3f(0.5, 0.5, 0.5);
+				glScalef(1.5, 2.0, 2.0);
+				DrawCube();
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				glColor3f(1.0, 0.5, 0.7);
+				DrawCube();
+			glPopMatrix();
+
+		glPopMatrix();
+
+		//desna ruka nadlaktica
+		glPushMatrix();		
+
+			glTranslatef(1.375, -0.75, 0.0);
+			glRotatef(-25.0, 1.0, 0.0, 0.0);
+			glPushMatrix();
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				glColor3f(1.0, 0.5, 0.7);
+				glScalef(1.5, 2.0, 2.0);
+				DrawCube();
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				glColor3f(0.5, 0.5, 0.5);
+				DrawCube();
+			glPopMatrix();
+
+			//desna ruka podlaktica
+			glTranslatef(0.0, -1.0, 0.0);
+			glRotatef(-45.0, 1.0, 0.0, 0.0);
+			glPushMatrix();
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				glColor3f(0.5, 0.5, 0.5);		
+				glScalef(1.5, 2.0, 2.0);
+				DrawCube();
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				glColor3f(1.0, 0.5, 0.7);
+				DrawCube();
+			glPopMatrix();
+
+		glPopMatrix();
+
+		//glava
+		glPushMatrix();
+			glTranslatef(0.0, 1.25, 0.0);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glColor3f(1.0, 0.5, 0.7);
+			glScalef(1.5, 1.0, 1.5);
+			DrawCube();
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glColor3f(0.5, 0.5, 0.5);
+			DrawCube();
+		glPopMatrix();
+
 	glPopMatrix();
-	glPopMatrix();
-	//-----------
 
 	glFlush();
 	SwapBuffers(pDC->m_hDC);
