@@ -17,6 +17,7 @@ public:
 	
 	void PrepareCube(float a);
 	void DrawCube();
+	void DrawRobot();
 	void DrawAxes(float size);
 	
 protected:
