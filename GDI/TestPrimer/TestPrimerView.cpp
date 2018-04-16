@@ -26,6 +26,7 @@ BEGIN_MESSAGE_MAP(CTestPrimerView, CView)
 	ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CView::OnFilePrintPreview)
+	ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
 // CTestPrimerView construction/destruction
@@ -91,7 +92,7 @@ void CTestPrimerView::OnDraw(CDC* pDC)
 
 	// Ako hocu
 	// => rotiraj u odnosu na neku tacku sa pomerajem u neko mesto
-	Translate(pDC, 100, 200, true);
+	Translate(pDC, 100, 200, true);	
 	pDC->Rectangle(CRect(-5, -5, 5, 5));
 	pDC->SetWorldTransform(&oldForm);
 
@@ -129,8 +130,7 @@ void CTestPrimerView::OnDraw(CDC* pDC)
 		//0 -> normalno crtanje
 		//90 -> gleda ka centru
 		//270 -> gleda ka spoljasnjosti
-		//-tmpAngle2 -> pravo na dole
-
+		//-tmpAngle2 -> pravo na dole		
 		pDC->TextOut(0, 0, (CString)data[i]);
 		
 		pDC->SetWorldTransform(&oldForm);
@@ -245,3 +245,23 @@ CTestPrimerDoc* CTestPrimerView::GetDocument() const // non-debug version is inl
 
 
 // CTestPrimerView message handlers
+
+
+void CTestPrimerView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	// TODO: Add your message handler code here and/or call default
+
+	CRect rect;
+	GetClientRect(&rect);
+
+	CRgn rgn;
+	rgn.CreateRectRgn(rect.Width() / 2, rect.Height() / 2, rect.Width() / 2 + 100, rect.Height() / 2 + 100);
+
+
+	if (rgn.PtInRegion(point))
+	{
+		exit(-1);
+	}
+
+	CView::OnLButtonDown(nFlags, point);
+}

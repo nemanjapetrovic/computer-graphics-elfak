@@ -137,31 +137,43 @@ void CGLRenderer::DrawCube()
 
 	glBegin(GL_QUADS);
 
+	//prednja
+	glNormal3f(0.0, 0.0, 1.0);
 	glArrayElement(0);
 	glArrayElement(1);
 	glArrayElement(2);
 	glArrayElement(3);
 
+	// desno
+	glNormal3f(1.0, 0.0, 0.0);
 	glArrayElement(1);
 	glArrayElement(2);
 	glArrayElement(5);
 	glArrayElement(4);
 
+	//nazad
+	glNormal3f(0.0, 0.0, -1.0);
 	glArrayElement(4);
 	glArrayElement(5);
 	glArrayElement(6);
 	glArrayElement(7);
 
+	//levo
+	glNormal3f(-1.0, 0.0, 0.0);
 	glArrayElement(6);
 	glArrayElement(3);
 	glArrayElement(0);
 	glArrayElement(7);
 
+	//gore
+	glNormal3f(0.0, 1.0, 0.0);
 	glArrayElement(3);
 	glArrayElement(2);
 	glArrayElement(5);
 	glArrayElement(6);
 
+	//dole
+	glNormal3f(0.0, -1.0, 0.0);
 	glArrayElement(0);
 	glArrayElement(1);
 	glArrayElement(4);
