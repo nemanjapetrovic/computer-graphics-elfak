@@ -15,10 +15,8 @@ public:
 	double R(double a, double alpha, int n, double h);
 	void NormCrossProd(double x1, double y1, double z1, double x2, double y2, double z2, double& x, double& y, double& z);
 	
-	void PrepareCube(float a);
-	void DrawBrickCube();
 	void DrawAxes(float size);
-	void DrawWall(double sizeX, double sizeY, int repX, int repY);
+	
 protected:
 	HGLRC	 m_hrc; //OpenGL Rendering Context 
 

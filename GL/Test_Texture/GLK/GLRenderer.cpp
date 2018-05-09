@@ -11,23 +11,18 @@
 
 float vert[72];
 float tex[48];
-float tex2[48];
 
-CTex *brick_tex, *namotana_tex;
+CTex *brick_tex;
 
 CGLRenderer::CGLRenderer(void)
 {
 	brick_tex = new CTex();
-	namotana_tex = new CTex();
 }
 
 CGLRenderer::~CGLRenderer(void)
 {
 	brick_tex->Release();
 	delete brick_tex;
-	
-	namotana_tex->Release();
-	delete namotana_tex;
 }
 
 bool CGLRenderer::CreateGLContext(CDC* pDC)
@@ -72,7 +67,6 @@ void CGLRenderer::PrepareScene(CDC *pDC)
 	PrepareCube(1.0);	
 
 	brick_tex->LoadTexture((CString)"brick.png");
-	namotana_tex->LoadTexture((CString)"env.png");
 
 	//---------------------------------
     wglMakeCurrent(NULL, NULL);
@@ -89,16 +83,28 @@ void CGLRenderer::DrawScene(CDC *pDC)
 	
 	// Kocka obicna sa ciglama
 	brick_tex->PrepareTexture(false);
-	brick_tex->Select();	
+	brick_tex->Select();
 	DrawBrickCube();
 
-	glTranslatef(2.0, 0.0, 0.0);
+	// zid iza kocke
+	glPushMatrix();
+		glTranslatef(0.0, 0.0, -2.5);
+		DrawWall(5.0, 5.0, 1.0, 1.0);
+	glPopMatrix();
 
-	// Kocka sa motanom teksturom
-	namotana_tex->PrepareTexture(false);
-	namotana_tex->Select();
-	DrawNamotanaCube();
+	// levi zid
+	glPushMatrix();
+		glTranslatef(-2.5, 0.0, 0.0);
+		glRotatef(90.0, 0.0, 1.0, 0.0);
+		DrawWall(5.0, 5.0, 1.0, 1.0);
+	glPopMatrix();
 
+	// pod
+	glPushMatrix();
+		glTranslatef(0.0, -2.5, 0.0);
+		glRotatef(-90.0, 1.0, 0.0, 0.0);		
+		DrawWall(5.0, 5.0, 1.0, 1.0);
+	glPopMatrix();
 
 	glFlush();
 	SwapBuffers(pDC->m_hDC);
@@ -180,23 +186,23 @@ void CGLRenderer::PrepareCube(float a)
 	//napred
 	tex[0] = 0.0 ; tex[1] = 0.0;//0
 	tex[2] = 1.0;  tex[3] = 0.0;//1
-	tex[4] = 1.0; tex[5] = 1.0; //2
-	tex[6] = 0.0; tex[7] = 1.0; //3
+	tex[4] = 1.0; tex[5] = 1.0;//2
+	tex[6] = 0.0; tex[7] = 1.0;//3
 
 	//desno
-	tex[8] = 0.0; tex[9] = 0.0; //1
-	tex[10] =0.0; tex[11] = 1.0;//2
+	tex[8] = 0.0; tex[9] = 0.0;//1
+	tex[10] = 0.0; tex[11] = 1.0;//2
 	tex[12] = 1.1; tex[13] = 1.1;//5
 	tex[14] = 1.0; tex[15] = 0.0;//4
 	
 	//iza
 	tex[16] = 0.0; tex[17] = 1.0;//5
-	tex[18] = 0.0; tex[19] = 0.0; //4
-	tex[20] = 1.0; tex[21] =0.0; //7
+	tex[18] = 0.0; tex[19] = 0.0;//4
+	tex[20] = 1.0; tex[21] = 0.0;//7
 	tex[22] = 1.0; tex[23] = 1.1;//6
 
 	//levo
-	tex[24] = 0.0; tex[25] = 0.0; //7
+	tex[24] = 0.0; tex[25] = 0.0;//7
 	tex[26] = 0.0; tex[27] = 1.0;//6
 	tex[28] = 1.0; tex[29] = 1.0;//3
 	tex[30] = 1.0; tex[31] = 0.0;//0
@@ -204,53 +210,34 @@ void CGLRenderer::PrepareCube(float a)
 	//gore
 	tex[32] = 0.0; tex[33] = 0.0;//3
 	tex[34] = 1.0; tex[35] = 0.0;//2												
-	tex[36] = 1.1; tex[37] = 1.1; //5
+	tex[36] = 1.1; tex[37] = 1.1;//5
 	tex[38] = 0.0; tex[39] = 1.0;//6
 	
 	//dole
 	tex[40] = 0.0; tex[41] = 0.0;//0
-	tex[42] = 1.0; tex[43] = 0.0; //1
-	tex[44] = 1.1; tex[45] = 1.1; //4
-	tex[46] = 0.0; tex[47] = 1.0;	//7
+	tex[42] = 1.0; tex[43] = 0.0;//1
+	tex[44] = 1.1; tex[45] = 1.1;//4
+	tex[46] = 0.0; tex[47] = 1.0;//7
 
+}
 
-	//tex 2 - namotana
+void CGLRenderer::DrawWall(double sizeX,double sizeY, int repX, int repY)
+{
+	glBegin(GL_QUADS);
 
-	//napred
-	tex2[0] = 0.25; tex2[1] = 0.0;//0
-	tex2[2] = 0.5;  tex2[3] = 0.0;//1
-	tex2[4] = 0.5; tex2[5] =(float) 1/3;//2
-	tex2[6] = 0.25; tex2[7] = (float)1/3;//2
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f((-sizeX / 2), (-sizeY / 2), 0.0);
 
-	//desno
-	tex2[8] = 0.5; tex2[9] = (float)1/3; //1
-	tex2[10] = 0.5; tex2[11] = (float)2/3;//2
-	tex2[12] = 0.75; tex2[13] = (float)2/3;//5
-	tex2[14] = 0.75; tex2[15] = (float)1/3;//4
+	glTexCoord2f(repX, 0.0);
+	glVertex3f((sizeX / 2), (-sizeY / 2), 0.0);
 
-	//iza
-	tex2[16] = 0.5; tex2[17] = 1;//5
-	tex2[18] = 0.5; tex2[19] = (float)2/3; //4
-	tex2[20] = 0.25; tex2[21] = (float)2/3; //7
-	tex2[22] = 0.25; tex2[23] = 1;//6
+	glTexCoord2f(repX, repY);
+	glVertex3f((sizeX / 2), (sizeY / 2), 0.0);
 
-	//levo
-	tex2[24] = 0.0; tex2[25] = (float)1/3; //7
-	tex2[26] = 0.0; tex2[27] = (float)2/3;//6
-	tex2[28] = 0.25; tex2[29] = (float)2/3;//3
-	tex2[30] = 0.25; tex2[31] = (float)1/3;//0
+	glTexCoord2f(0.0, repY);
+	glVertex3f((-sizeX / 2), (sizeY / 2), 0.0);
 
-	//gore
-	tex2[32] = 0.75; tex2[33] = (float)1/3;//3
-	tex2[34] = 1.0; tex2[35] = (float)1/3;//2												
-	tex2[36] = 1.0; tex2[37] = (float)2/3; //5
-	tex2[38] = 0.75; tex2[39] = (float)2/3;//6
-
-	//dole
-	tex2[40] = 0.25; tex2[41] = (float)1/3;//0
-	tex2[42] = 0.5; tex2[43] = (float)1/3; //1
-	tex2[44] = 0.5; tex2[45] = (float)2/3; //4
-	tex2[46] = 0.25; tex2[47] = (float)2/3;//7
+	glEnd();
 }
 
 void CGLRenderer::DrawBrickCube()
@@ -259,22 +246,6 @@ void CGLRenderer::DrawBrickCube()
 	
 	glVertexPointer(3, GL_FLOAT, 0, vert);	
 	glTexCoordPointer(2, GL_FLOAT, 0, tex);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	glDrawArrays(GL_QUADS, 0, 24);
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-}
-
-void CGLRenderer::DrawNamotanaCube()
-{
-	DrawAxes(2.0);
-
-	glVertexPointer(3, GL_FLOAT, 0, vert);
-	glTexCoordPointer(2, GL_FLOAT, 0, tex2);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);

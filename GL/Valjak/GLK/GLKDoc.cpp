@@ -10,8 +10,6 @@
 #endif
 
 #include "GLKDoc.h"
-#include "Tex.h"
-#include "DImage.h"
 
 #include <propkey.h>
 
