@@ -16,7 +16,8 @@ public:
 	void NormCrossProd(double x1, double y1, double z1, double x2, double y2, double z2, double& x, double& y, double& z);
 	
 	void DrawAxes(float size);
-	
+	float toRad(float angle);
+
 protected:
 	HGLRC	 m_hrc; //OpenGL Rendering Context 
 

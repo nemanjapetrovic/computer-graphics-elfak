@@ -6,9 +6,11 @@
 #include "GL\glut.h"
 #include "DImage.h"
 #include "Tex.h"
+
+
 //#pragma comment(lib, "GL\\glut32.lib")
 
-
+const double M_PI = 3.141592653589793238463;
 CGLRenderer::CGLRenderer(void)
 {
 }
@@ -68,44 +70,47 @@ void CGLRenderer::DrawScene(CDC *pDC)
 	glLoadIdentity();
 	gluLookAt(3.0, 3.0, 3.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 	
-	glColor3f(0.5, 0.5, 0.5);
-	DrawAxes(1.0);
+	int h = 3.0;//visina
+	int r = 1.0;//precnik
 
-	// valjak
-	int n = 100;	
-	float r= 1.0;
-	float h = 1.0;
-	float half_angle = 3.14 / n;
-
-	glPushMatrix();
-	for (int i = 0; i < n; i++)
-	{
-		glPushMatrix();
-		glTranslatef(r*cos(half_angle), 0.0, 0.0);
-
-		glBegin(GL_QUADS);
-		glNormal3f(cos(half_angle), 0.0, sin(half_angle));
-		glVertex3f(0.0, h, sin(half_angle)*r);
-		glVertex3f(0.0, 0.0, sin(half_angle)*r);
-
-		glNormal3f(cos(half_angle), 0.0, -sin(half_angle));
-		glVertex3f(0.0, 0.0, -sin(half_angle)*r);
-		glVertex3f(0.0, h, -sin(half_angle)*r);
-
-		glEnd();
-
-		glPopMatrix();
-
-		glRotatef(360.0 / n, 0.0, 1.0, 0.0);
+	glColor3f(0.2, 0.4, 0.1);
+	//telo cilindra
+	glBegin(GL_QUAD_STRIP);
+	for (int angle = 0; angle <= 360; angle += 5) {
+		glVertex3f(r * cos(toRad(angle)), h / 2, r * sin(toRad(angle)));
+		glVertex3f(r * cos(toRad(angle)), -h / 2, r * sin(toRad(angle)));
 	}
+	glEnd();
+	
+	glColor3f(0.5, 0.3, 0.6);
+	// osnova cilinda : gore
+	glBegin(GL_TRIANGLE_FAN);
+	glVertex3f(0.0, h/2, 0.0);
+	for (int angle = 0; angle <= 360; angle += 5) {
+		glVertex3f(r * cos(toRad(angle)), h/2, r * sin(toRad(angle)));
+	}
+	glEnd();
 
-	glPopMatrix();
+
+	glColor3f(0.7, 0.7, 0.7);
+	// osnova cilinda : dole
+	glBegin(GL_TRIANGLE_FAN);
+	glVertex3f(0.0, -h / 2, 0.0);
+	for (int angle = 0; angle <= 360; angle += 5) {
+		glVertex3f(r * cos(toRad(angle)), -h / 2, r * sin(toRad(angle)));
+	}
+	glEnd();
 
 	//----
 	glFlush();
 	SwapBuffers(pDC->m_hDC);
     //---------------------------------	
     wglMakeCurrent(NULL, NULL);
+}
+
+float CGLRenderer::toRad(float angle)
+{
+	return (angle*3.14) / 180;
 }
 
 void CGLRenderer::Reshape(CDC *pDC, int w, int h)
