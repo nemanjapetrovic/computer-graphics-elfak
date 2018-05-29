@@ -13,8 +13,8 @@
 const double M_PI = 3.141592653589793238463;
 CTex *tex;
 CGLRenderer::CGLRenderer(void)
-{
-	tex = new CTex();
+{	
+	tex = new CTex();	
 }
 
 CGLRenderer::~CGLRenderer(void)
@@ -80,44 +80,75 @@ void CGLRenderer::DrawScene(CDC *pDC)
 	tex->PrepareTexture(false);
 	tex->Select();
 
-	int h = 3.0;//visina
-	int r = 1.0;//precnik
+	float a = 2.0;
+	glBegin(GL_QUADS);
+	
+	//napred
+	glNormal3f(0.0, 0.0, 1.0);
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f(-a / 2, -a / 2, a / 2);
+	glTexCoord2f(1.0, 0.0);
+	glVertex3f(a / 2, -a / 2, a / 2);
+	glTexCoord2f(1.0, 1.0);
+	glVertex3f(a / 2, a / 2, a / 2);
+	glTexCoord2f(0.0, 1.0);
+	glVertex3f(-a / 2, a / 2, a / 2);
+	
+	//desno
+	glNormal3f(1.0, 0.0, 0.0);
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f(a / 2, -a / 2, a / 2);
+	glTexCoord2f(1.0, 0.0);
+	glVertex3f(a / 2, -a / 2, -a / 2);
+	glTexCoord2f(1.0, 1.0);
+	glVertex3f(a / 2, a / 2, -a / 2);
+	glTexCoord2f(0.0, 1.0);
+	glVertex3f(a / 2, a / 2, a / 2);
 
-	//telo cilindra
-	glBegin(GL_QUAD_STRIP);
-	for (int angle = 0; angle <= 360; angle += 5) {
-		glNormal3f(cos(toRad(angle)), 0.0, sin(toRad(angle)));
-		glTexCoord2f(angle, 0.0);
-		glVertex3f(r * cos(toRad(angle)), -h / 2, r * sin(toRad(angle)));
+	//iza
+	glNormal3f(0.0, 0.0, -1.0);
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f(a / 2, -a / 2, -a / 2);
+	glTexCoord2f(1.0, 0.0);
+	glVertex3f(-a / 2, -a / 2, -a / 2);
+	glTexCoord2f(1.0, 1.0);
+	glVertex3f(-a / 2, a / 2, -a / 2);
+	glTexCoord2f(0.0, 1.0);
+	glVertex3f(a / 2, a / 2, -a / 2);
 
-		glNormal3f(cos(toRad(angle)), 0.0, sin(toRad(angle)));
-		glTexCoord2f(angle, 1.0);
-		glVertex3f(r * cos(toRad(angle)), h / 2, r * sin(toRad(angle)));
-	}
-	glEnd();
+	//levo
+	glNormal3f(-1.0, 0.0, 0.0);
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f(-a / 2, -a / 2, -a / 2);
+	glTexCoord2f(1.0, 0.0);
+	glVertex3f(-a / 2, -a / 2, a / 2);
+	glTexCoord2f(1.0, 1.0);
+	glVertex3f(-a / 2, a / 2, a / 2);
+	glTexCoord2f(0.0, 1.0);
+	glVertex3f(-a / 2, a / 2, -a / 2);
 
-	// osnova cilinda : gore
-	glBegin(GL_TRIANGLE_FAN);
+	//gore
 	glNormal3f(0.0, 1.0, 0.0);
 	glTexCoord2f(0.0, 0.0);
-	glVertex3f(0.0, h / 2, 0.0);
-	for (int angle = 0; angle <= 360; angle += 5) {
-		glNormal3f(0.0, 1.0, 0.0);
-		glTexCoord2f(angle, 1.0);
-		glVertex3f(r * cos(toRad(angle)), h / 2, r * sin(toRad(angle)));
-	}
-	glEnd();
+	glVertex3f(-a / 2, a / 2, a / 2);
+	glTexCoord2f(1.0, 0.0);
+	glVertex3f(a / 2, a / 2, a / 2);
+	glTexCoord2f(1.0, 1.0);
+	glVertex3f(a / 2, a / 2, -a / 2);
+	glTexCoord2f(0.0, 1.0);
+	glVertex3f(-a / 2, a / 2, -a / 2);
 
-	// osnova cilinda : dole
-	glBegin(GL_TRIANGLE_FAN);
-	glNormal3f(0.0, 1.0, 0.0);
+	//dole
+	glNormal3f(0.0, -1.0, 0.0);
 	glTexCoord2f(0.0, 0.0);
-	glVertex3f(0.0, -h / 2, 0.0);
-	for (int angle = 0; angle <= 360; angle += 5) {
-		glNormal3f(0.0, 1.0, 0.0);
-		glTexCoord2f(angle, 1.0);
-		glVertex3f(r * cos(toRad(angle)), -h / 2, r * sin(toRad(angle)));
-	}
+	glVertex3f(-a / 2, -a / 2, a / 2);
+	glTexCoord2f(1.0, 0.0);
+	glVertex3f(a / 2, -a / 2, a / 2);
+	glTexCoord2f(1.0, 1.0);
+	glVertex3f(a / 2, -a / 2, -a / 2);
+	glTexCoord2f(0.0, 1.0);
+	glVertex3f(-a / 2, -a / 2, -a / 2);
+
 	glEnd();
 
 	//----

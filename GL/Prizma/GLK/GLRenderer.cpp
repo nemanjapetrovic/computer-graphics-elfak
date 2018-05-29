@@ -13,8 +13,8 @@
 const double M_PI = 3.141592653589793238463;
 CTex *tex;
 CGLRenderer::CGLRenderer(void)
-{
-	tex = new CTex();
+{	
+	tex = new CTex();	
 }
 
 CGLRenderer::~CGLRenderer(void)
@@ -75,50 +75,67 @@ void CGLRenderer::DrawScene(CDC *pDC)
     
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	gluLookAt(3.0, 3.0, 3.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt(-3.0, 3.0, 3.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 	
 	tex->PrepareTexture(false);
 	tex->Select();
-
-	int h = 3.0;//visina
-	int r = 1.0;//precnik
-
-	//telo cilindra
-	glBegin(GL_QUAD_STRIP);
-	for (int angle = 0; angle <= 360; angle += 5) {
-		glNormal3f(cos(toRad(angle)), 0.0, sin(toRad(angle)));
-		glTexCoord2f(angle, 0.0);
-		glVertex3f(r * cos(toRad(angle)), -h / 2, r * sin(toRad(angle)));
-
-		glNormal3f(cos(toRad(angle)), 0.0, sin(toRad(angle)));
-		glTexCoord2f(angle, 1.0);
-		glVertex3f(r * cos(toRad(angle)), h / 2, r * sin(toRad(angle)));
-	}
+	
+	// podaci o visini i duzini stranice osnove	
+	float h = 1.0;
+	
+	//osnova gore
+	glBegin(GL_TRIANGLES);
+		glTexCoord2f(0.0, 0.0);
+		glVertex3f(-1.0, h / 2, 1.0);
+		glTexCoord2f(0.5, 1.0);
+		glVertex3f(0.0, h / 2, -1.0);
+		glTexCoord2f(1.0, 0.0);
+		glVertex3f(1.0, h / 2, 1.0);		
 	glEnd();
 
-	// osnova cilinda : gore
-	glBegin(GL_TRIANGLE_FAN);
-	glNormal3f(0.0, 1.0, 0.0);
-	glTexCoord2f(0.0, 0.0);
-	glVertex3f(0.0, h / 2, 0.0);
-	for (int angle = 0; angle <= 360; angle += 5) {
-		glNormal3f(0.0, 1.0, 0.0);
-		glTexCoord2f(angle, 1.0);
-		glVertex3f(r * cos(toRad(angle)), h / 2, r * sin(toRad(angle)));
-	}
+	// osnova dole
+	glBegin(GL_TRIANGLES);
+		glTexCoord2f(0.0, 0.0);
+		glVertex3f(-1.0, -h / 2, 1.0);
+		glTexCoord2f(0.5, 1.0);
+		glVertex3f(0.0, -h / 2, -1.0);
+		glTexCoord2f(1.0, 0.0);
+		glVertex3f(1.0, -h / 2, 1.0);
 	glEnd();
 
-	// osnova cilinda : dole
-	glBegin(GL_TRIANGLE_FAN);
-	glNormal3f(0.0, 1.0, 0.0);
-	glTexCoord2f(0.0, 0.0);
-	glVertex3f(0.0, -h / 2, 0.0);
-	for (int angle = 0; angle <= 360; angle += 5) {
-		glNormal3f(0.0, 1.0, 0.0);
-		glTexCoord2f(angle, 1.0);
-		glVertex3f(r * cos(toRad(angle)), -h / 2, r * sin(toRad(angle)));
-	}
+	//telo
+	glBegin(GL_QUADS);
+		//napred
+		glTexCoord2f(0.0, 0.0);
+		glVertex3f(-1.0, -h / 2, 1.0);
+		glTexCoord2f(1.0, 0.0);
+		glVertex3f(1.0, -h / 2, 1.0);
+		glTexCoord2f(1.0, 1.0);
+		glVertex3f(1.0, h / 2, 1.0);
+		glTexCoord2f(0.0, 1.0);
+		glVertex3f(-1.0, h / 2, 1.0);
+
+		//desno
+		glTexCoord2f(0.0, 0.0);
+		glVertex3f(1.0, -h / 2, 1.0);
+		glTexCoord2f(1.0, 0.0);
+		glVertex3f(0.0, -h / 2, -1.0);
+		glTexCoord2f(1.0, 1.0);
+		glVertex3f(0.0, h / 2, -1.0);
+		glTexCoord2f(0.0, 1.0);
+		glVertex3f(1.0, h / 2, 1.0);
+
+		//levo
+		glTexCoord2f(0.0, 0.0);
+		glVertex3f(0.0, -h / 2, -1.0);
+		glTexCoord2f(1.0, 0.0);
+		glVertex3f(-1.0, -h / 2, 1.0);
+		glTexCoord2f(1.0, 1.0);
+		glVertex3f(-1.0, h / 2, 1.0);
+		glTexCoord2f(0.0, 1.0);
+		glVertex3f(0.0, h / 2, -1.0);
 	glEnd();
+
 
 	//----
 	glFlush();

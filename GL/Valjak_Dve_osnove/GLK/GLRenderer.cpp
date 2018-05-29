@@ -75,24 +75,29 @@ void CGLRenderer::DrawScene(CDC *pDC)
     
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	gluLookAt(3.0, 3.0, 3.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt(3.0, 6.0, 3.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 	
 	tex->PrepareTexture(false);
 	tex->Select();
 
-	int h = 3.0;//visina
-	int r = 1.0;//precnik
+	float h = 3.0;//visina
+	float r1 = 0.5;//precnik gore
+	float r2 = 1.0;//precnik dole        
 
-	//telo cilindra
+				   //telo cilindra    
 	glBegin(GL_QUAD_STRIP);
 	for (int angle = 0; angle <= 360; angle += 5) {
+		// tacka dole
+		// r2 dole precnik
 		glNormal3f(cos(toRad(angle)), 0.0, sin(toRad(angle)));
 		glTexCoord2f(angle, 0.0);
-		glVertex3f(r * cos(toRad(angle)), -h / 2, r * sin(toRad(angle)));
+		glVertex3f(r2 * cos(toRad(angle)), -h / 2, r2 * sin(toRad(angle)));
 
+		// tacka gore
+		// r1 gore precnik
 		glNormal3f(cos(toRad(angle)), 0.0, sin(toRad(angle)));
 		glTexCoord2f(angle, 1.0);
-		glVertex3f(r * cos(toRad(angle)), h / 2, r * sin(toRad(angle)));
+		glVertex3f(r1 * cos(toRad(angle)), h / 2, r1 * sin(toRad(angle)));
 	}
 	glEnd();
 
@@ -101,24 +106,25 @@ void CGLRenderer::DrawScene(CDC *pDC)
 	glNormal3f(0.0, 1.0, 0.0);
 	glTexCoord2f(0.0, 0.0);
 	glVertex3f(0.0, h / 2, 0.0);
-	for (int angle = 0; angle <= 360; angle += 5) {
+	for (float angle = 0; angle <= 360; angle += 5) {
 		glNormal3f(0.0, 1.0, 0.0);
 		glTexCoord2f(angle, 1.0);
-		glVertex3f(r * cos(toRad(angle)), h / 2, r * sin(toRad(angle)));
+		glVertex3f(r1 * cos(toRad(angle)), h / 2, r1 * sin(toRad(angle)));
 	}
 	glEnd();
 
 	// osnova cilinda : dole
 	glBegin(GL_TRIANGLE_FAN);
-	glNormal3f(0.0, 1.0, 0.0);
+	glNormal3f(0.0, -1.0, 0.0);
 	glTexCoord2f(0.0, 0.0);
 	glVertex3f(0.0, -h / 2, 0.0);
-	for (int angle = 0; angle <= 360; angle += 5) {
-		glNormal3f(0.0, 1.0, 0.0);
+	for (float angle = 0; angle <= 360; angle += 5) {
+		glNormal3f(0.0, -1.0, 0.0);
 		glTexCoord2f(angle, 1.0);
-		glVertex3f(r * cos(toRad(angle)), -h / 2, r * sin(toRad(angle)));
+		glVertex3f(r2 * cos(toRad(angle)), -h / 2, r2 * sin(toRad(angle)));
 	}
 	glEnd();
+
 
 	//----
 	glFlush();
@@ -129,7 +135,7 @@ void CGLRenderer::DrawScene(CDC *pDC)
 
 float CGLRenderer::toRad(float angle)
 {
-	return (angle * M_PI) / 180;
+	return  (angle * M_PI) / 180;
 }
 
 void CGLRenderer::Reshape(CDC *pDC, int w, int h)
