@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{0097C061-6C99-44AC-95C1-D3A0F467D936}</ProjectGuid>
-    <RootNamespace>Circles_2</RootNamespace>
+    <ProjectGuid>{16139F83-9034-4528-9FB5-774C09EF03EC}</ProjectGuid>
+    <RootNamespace>Sat_2</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
     <Keyword>MFCProj</Keyword>
   </PropertyGroup>
@@ -185,21 +185,21 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Circles_2.h" />
-    <ClInclude Include="Circles_2Doc.h" />
-    <ClInclude Include="Circles_2View.h" />
     <ClInclude Include="DImage.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="Sat_2.h" />
+    <ClInclude Include="Sat_2Doc.h" />
+    <ClInclude Include="Sat_2View.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Circles_2.cpp" />
-    <ClCompile Include="Circles_2Doc.cpp" />
-    <ClCompile Include="Circles_2View.cpp" />
     <ClCompile Include="DImage.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="Sat_2.cpp" />
+    <ClCompile Include="Sat_2Doc.cpp" />
+    <ClCompile Include="Sat_2View.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -208,14 +208,14 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Circles_2.rc" />
+    <ResourceCompile Include="Sat_2.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Circles_2.rc2" />
+    <None Include="res\Sat_2.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\Circles_2.ico" />
-    <Image Include="res\Circles_2Doc.ico" />
+    <Image Include="res\Sat_2.ico" />
+    <Image Include="res\Sat_2Doc.ico" />
     <Image Include="res\Toolbar.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

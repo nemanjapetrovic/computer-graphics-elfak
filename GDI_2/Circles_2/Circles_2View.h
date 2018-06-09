@@ -26,6 +26,9 @@ public:
 	void DrawMultiCircle(CDC *pDC, int radius, int nConc, COLORREF colFill, CString strText);
 	void DrawFannyCircle(CDC *pDC, int radius, int nCricle, double dAlpha, int nCone, COLORREF colFillBig, COLORREF clFillSmall, CString strText);
 	void DrawAndSavePicture(CDC *pDC, CString strPicture, int radius);
+	void TranslateRotate(CDC * pDC, float x, float y, float angle, float distance);
+	void Rotate(CDC* pDC, float angle, bool right);
+	float toRad(float angle);
 protected:
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
 	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);

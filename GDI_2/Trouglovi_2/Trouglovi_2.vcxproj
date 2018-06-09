@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{0097C061-6C99-44AC-95C1-D3A0F467D936}</ProjectGuid>
-    <RootNamespace>Circles_2</RootNamespace>
+    <ProjectGuid>{DF2F1E71-CDC1-4254-B77A-FD4585505E5D}</ProjectGuid>
+    <RootNamespace>Trouglovi_2</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
     <Keyword>MFCProj</Keyword>
   </PropertyGroup>
@@ -185,19 +185,16 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Circles_2.h" />
-    <ClInclude Include="Circles_2Doc.h" />
-    <ClInclude Include="Circles_2View.h" />
     <ClInclude Include="DImage.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Trouglovi_2.h" />
+    <ClInclude Include="Trouglovi_2Doc.h" />
+    <ClInclude Include="Trouglovi_2View.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Circles_2.cpp" />
-    <ClCompile Include="Circles_2Doc.cpp" />
-    <ClCompile Include="Circles_2View.cpp" />
     <ClCompile Include="DImage.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -206,17 +203,20 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Trouglovi_2.cpp" />
+    <ClCompile Include="Trouglovi_2Doc.cpp" />
+    <ClCompile Include="Trouglovi_2View.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Circles_2.rc" />
+    <ResourceCompile Include="Trouglovi_2.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Circles_2.rc2" />
+    <None Include="res\Trouglovi_2.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\Circles_2.ico" />
-    <Image Include="res\Circles_2Doc.ico" />
     <Image Include="res\Toolbar.bmp" />
+    <Image Include="res\Trouglovi_2.ico" />
+    <Image Include="res\Trouglovi_2Doc.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
