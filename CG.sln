@@ -33,6 +33,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Trouglovi_2", "GDI_2\Trougl
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Suriken_2", "GDI_2\Suriken_2\Suriken_2.vcxproj", "{37B2E04E-D434-4644-B7E9-4E202D8A07F7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Cvet_2", "GDI_2\Cvet_2\Cvet_2.vcxproj", "{04BB13FB-8E8D-4400-8C64-3278AD76B62D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -161,6 +163,14 @@ Global
 		{37B2E04E-D434-4644-B7E9-4E202D8A07F7}.Release|x64.Build.0 = Release|x64
 		{37B2E04E-D434-4644-B7E9-4E202D8A07F7}.Release|x86.ActiveCfg = Release|Win32
 		{37B2E04E-D434-4644-B7E9-4E202D8A07F7}.Release|x86.Build.0 = Release|Win32
+		{04BB13FB-8E8D-4400-8C64-3278AD76B62D}.Debug|x64.ActiveCfg = Debug|x64
+		{04BB13FB-8E8D-4400-8C64-3278AD76B62D}.Debug|x64.Build.0 = Debug|x64
+		{04BB13FB-8E8D-4400-8C64-3278AD76B62D}.Debug|x86.ActiveCfg = Debug|Win32
+		{04BB13FB-8E8D-4400-8C64-3278AD76B62D}.Debug|x86.Build.0 = Debug|Win32
+		{04BB13FB-8E8D-4400-8C64-3278AD76B62D}.Release|x64.ActiveCfg = Release|x64
+		{04BB13FB-8E8D-4400-8C64-3278AD76B62D}.Release|x64.Build.0 = Release|x64
+		{04BB13FB-8E8D-4400-8C64-3278AD76B62D}.Release|x86.ActiveCfg = Release|Win32
+		{04BB13FB-8E8D-4400-8C64-3278AD76B62D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
