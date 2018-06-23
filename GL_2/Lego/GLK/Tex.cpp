@@ -1,0 +1,8 @@
+#include "StdAfx.h"
+#include "Tex.h"
+#include "GLRenderer.h"
+#include "GL\gl.h"
+#include "GL\glu.h"
+#include "GL\glaux.h"
+#include "GL\glut.h"
+#include "DImage.h"
