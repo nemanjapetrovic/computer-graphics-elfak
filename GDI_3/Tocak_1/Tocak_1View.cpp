@@ -96,10 +96,12 @@ void CTocak_1View::OnDraw(CDC* pDC)
 
 	memDC->DeleteDC();
 	delete memDC;
-*/
+	*/
+
 	/*
 		Poziv CMipMap klase za iscrtavanje zadatka pod C (sve moguce slike umanjenje za w/2 i h/2 do w>1 && h>1)
 	*/
+
 	
 	CRect rect;
 	GetClientRect(&rect);
@@ -123,12 +125,14 @@ void CTocak_1View::DrawWheel(CDC *pDC, double r1, double r2, double w)
 	brush.CreateSolidBrush(RGB(68, 68, 68));
 	CBrush *oldBrush = pDC->SelectObject(&brush);
 
+
+	pDC->BeginPath();
 	//r1 spoljasnji
 	pDC->Ellipse(-r1, -r1, r1, r1);
-
 	//r2 unutrasnji
-	pDC->SelectStockObject(NULL_BRUSH);
 	pDC->Ellipse(-r2, -r2, r2, r2);
+	pDC->EndPath();
+	pDC->StrokeAndFillPath();
 
 	//precke
 	pDC->SelectObject(&brush);
