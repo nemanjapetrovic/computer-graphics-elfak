@@ -5,7 +5,7 @@ Computer Graphics course @ Faculty of Electronic Engineering, University of Niš
 1. GDI
 2. OpenGL
 
-## Sve dodatne informacije kao i delovi koda koju mogu biti znatno od pomoći se mogu pronaći na sledećem linku: https://trello.com/b/xkeK9Zg9/grafika-za-21-dan
+#### Sve dodatne informacije kao i delovi koda koju mogu biti znatno od pomoći se mogu pronaći na sledećem linku: https://trello.com/b/xkeK9Zg9/grafika-za-21-dan
 
 ## Kako mogu da doprinesem ovom projektu?
 
